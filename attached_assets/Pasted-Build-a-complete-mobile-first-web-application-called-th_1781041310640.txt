@@ -1,0 +1,791 @@
+Build a complete mobile-first web application called the 
+"Spiffy Cleaning Company Payroll Tracker" as a working demo.
+React + Vite + TypeScript. Use Tailwind CSS. 
+localStorage for all data (no backend needed).
+
+The owner is NOT tech-savvy and is used to Jobber's UI.
+Build this to feel EXACTLY like Jobber — clean white 
+backgrounds, simple cards, clear status dots, large easy 
+tap targets, minimal complexity — but branded with 
+Spiffy Cleaning Company colors.
+
+════════════════════════════════════════════════════════════
+UI PHILOSOPHY — JOBBER-INSPIRED, SPIFFY BRANDED
+════════════════════════════════════════════════════════════
+
+Jobber's UI patterns to replicate:
+- White page backgrounds, light gray (#F9FAFB) section BG
+- Clean sans-serif typography (Inter or system-ui)
+- Simple top navbar with page title left, actions right
+- Left sidebar navigation on desktop (collapsible)
+- Card-based content with subtle drop shadows
+- Status dots: green = active/approved, red = late/overdue,
+  yellow = pending/requires action, gray = inactive
+- Simple data tables with alternating row shading
+- Large, clear action buttons with obvious labels
+- Inline status badges (small pill shapes)
+- Breadcrumb navigation: "Overview > John Doe > Week"
+- Confirmation modals before destructive actions
+- Empty states with helpful text (not just blank space)
+
+Replace Jobber's green (#16A34A) with Spiffy cyan (#1DC8FF).
+Replace Jobber's dark green nav with Spiffy navy (#0D1B4E).
+
+SPIFFY BRAND COLORS:
+  Primary navy:    #0D1B4E  (navbar, section headers)
+  Cyan accent:     #1DC8FF  (buttons, active states, links)
+  Blue secondary:  #2471C8  (hover states, secondary buttons)
+  Near black:      #1A1A2A  (body text)
+  White:           #FFFFFF  (card backgrounds)
+  Light gray:      #F9FAFB  (page background)
+  Border gray:     #E5E7EB  (card borders, dividers)
+  Label gray:      #6B7280  (secondary text, labels)
+  Success green:   #16A34A  (approved status)
+  Alert red:       #DC2626  (past due, errors, unapproved)
+  Warning yellow:  #F59E0B  (pending, requires action)
+
+Buttons:
+  Primary: bg #0D1B4E, text white, hover bg #1DC8FF 
+           hover text #0D1B4E, rounded-lg, py-2 px-4
+  Secondary: border #0D1B4E, text #0D1B4E, bg white,
+             hover bg #F4F8FF
+  Danger: bg #DC2626, text white, hover bg #B91C1C
+
+STATUS DOTS (exactly like Jobber):
+  ● green  = Approved / Active / On Time
+  ● red    = Past Due / Unapproved / Late  
+  ● yellow = Pending / Requires Action
+  ● gray   = Locked / Inactive
+
+════════════════════════════════════════════════════════════
+LAYOUT — JOBBER STYLE
+════════════════════════════════════════════════════════════
+
+DESKTOP (≥1024px):
+  Left sidebar: 220px wide, bg #0D1B4E, fixed height
+    - Spiffy logo at top (💧 Spiffy Cleaning in #1DC8FF)
+    - Nav items in white text, cyan left border when active
+    - Bottom: user name + role + logout link
+  Main content area: remaining width, bg #F9FAFB
+  Page header: white card, page title left, action buttons right
+
+TABLET (640-1023px):
+  Sidebar collapses to icons only
+  Hamburger expands to full sidebar overlay
+
+MOBILE (<640px):
+  No sidebar — bottom tab bar instead (like Jobber mobile)
+  Tabs: Home | My Week | History | (Manager: Team | Dashboard)
+  Page headers simplified, action buttons move to FAB
+
+════════════════════════════════════════════════════════════
+DEMO ACCOUNTS — REAL SPIFFY TEAM MEMBERS
+════════════════════════════════════════════════════════════
+
+Use the REAL names from Dexter's Jobber timesheet.
+Password for all accounts: spiffy2026
+
+EMPLOYEE ACCOUNTS (role: "employee"):
+  alejandro@spiffy.com        — Alejandro
+  gissell@spiffy.com          — Gissell Lilieth López
+  jesenia@spiffy.com          — Jesenia Fernandez
+  linda@spiffy.com            — Linda Rivera
+  oneyda@spiffy.com           — Oneyda
+  sugeydi@spiffy.com          — Sugeydi Rivera
+  sujeydi@spiffy.com          — Sujeydi Jarquin
+
+MANAGER ACCOUNT (role: "manager"):
+  dexter@spiffy.com           — Dexter Thomas
+  (this is the OWNER — give full manager + admin access)
+
+ADMIN ACCOUNT (same person, full access):
+  admin@spiffy.com            — Dexter Thomas (Admin)
+
+On the login screen show demo account tiles grouped by:
+  "Owner" | "Team Members"
+  Each tile shows name, role badge, "Sign In" button.
+  Clicking auto-fills credentials.
+
+════════════════════════════════════════════════════════════
+NAVIGATION STRUCTURE
+════════════════════════════════════════════════════════════
+
+SIDEBAR NAV (desktop) / BOTTOM TAB (mobile):
+
+For employees:
+  📋 My Week        → /employee/week
+  📅 History        → /employee/history
+
+For manager/admin:
+  🏠 Overview       → /manager/overview
+  👥 Team           → /manager/overview  
+  📊 Dashboard      → /manager/dashboard
+  💰 Collections    → /manager/collections
+  ⚙ Settings       → /admin/pay-rates
+
+All routes guard to /login if no session.
+After login redirect:
+  employee → /employee/week
+  manager/admin → /manager/overview
+
+════════════════════════════════════════════════════════════
+REAL PROPERTY LIST — FROM JOBBER
+════════════════════════════════════════════════════════════
+
+Load ALL of these into the property dropdown. 
+These are Dexter's real Jobber clients:
+
+Across The Park
+Apple Ridge Apartments
+Arbor Manor
+Auburn Gates Apartments
+Berkshire Apartments
+Bishop Moore
+Bloomfield Square
+Carriage Cove
+Central Park Estate
+Cherokee Hill
+Chidester Place
+Conner Creek
+Cranbrooke Centre
+Crystal Loft
+Farmington View
+Great Lakes Facility Management
+Huntley Manor
+Joy West Manor
+Kensington Park
+KMG Huron Vista
+Kings Pointe
+Knollwood Village
+Left Field
+LKQ Corp
+LR Plymouth Heritage
+Richmond Club
+Ryan Court
+The Cove On 13
+Thornberry Apartments
+Village Club of Farmington Hills
+West Oaks
+Windmill Pointe
+Woodview Commons
+
+Sort alphabetically in dropdown.
+Add a search/filter input at top of dropdown 
+(Jobber-style type-ahead search).
+
+════════════════════════════════════════════════════════════
+JOB TYPE MAPPING — JOBBER NAMES → PAY TRACKER NAMES
+════════════════════════════════════════════════════════════
+
+Jobber uses these names. Map them to pay categories:
+
+Jobber Name               → Tracker Job Type
+"Unit Cleaning"           → Units ($105)
+"Building Cleaning"       → Building/Enterprise ($100)
+"Hallway Cleaning"        → Small Hallway ($175)
+"Clubhouse Cleaning"      → Clubhouse (select tier)
+"Clubhouse/Hallway        → Club/Hallway (select tier)
+  Cleaning"
+"Clubhouse/Model          → Clubhouse (select tier)
+  cleaning"
+"Touch-Up"                → Touch-Up ($30)
+"LKQ" or "LKQ Corp"       → LKQ ($45)
+All others                → Specialty (manual entry)
+
+Show BOTH names in the job type dropdown:
+  "Unit Cleaning (Units)"
+  "Building Cleaning (Building/Enterprise)"
+  "Hallway Cleaning (Small Hallway)"
+  "Clubhouse Cleaning"
+  "Clubhouse/Hallway Cleaning"
+  "Touch-Up"
+  "LKQ"
+  "Specialty / Other"
+
+This helps the team recognize familiar Jobber names.
+
+════════════════════════════════════════════════════════════
+PAY RATE MATRIX — EXACT, DO NOT CHANGE ANY NUMBER
+════════════════════════════════════════════════════════════
+
+UNIT CLEANING ($105 rate):
+  2-person: Leader=$55, Member=$50, Total=$105
+  3-person: Leader=$38, Member=$33.50, Total=$105
+  4-person: Leader=$30, Member=$25, Total=$105
+
+BUILDING/ENTERPRISE ($100 rate):
+  2-person: Leader=$55, Member=$45, Total=$100
+  3-person: Leader=$36, Member=$32, Total=$100
+  4-person: Leader=$30, Member=$23.50, Total=$77
+  
+SMALL HALLWAY ($175 rate):
+  2-person: Leader=$90, Member=$85, Total=$175
+  3-person: Leader=$63, Member=$56, Total=$175
+  4-person: Leader=$47, Member=$42, Total=$131
+
+CLUBHOUSE — THREE TIERS:
+  $150 tier: 2p L=80/M=70 | 3p L=55/M=47 | 4p L=45/M=35
+  $120 tier: 2p L=65/M=55 | 3p L=45/M=37 | 4p L=35/M=28
+  $80 tier:  2p L=45/M=35 | 3p L=30/M=25 | 4p L=25/M=18
+
+CLUB/HALLWAY — TWO TIERS:
+  $725 tier: 2p L=375/M=350 | 3p L=265/M=230 | 4p L=200/M=175
+  $500 tier: 2p L=260/M=240 | 3p L=180/M=160 | 4p L=135/M=120
+
+TOUCH-UP ($30 rate):
+  2-person: Leader=$17, Member=$13
+  3-person: Leader=$13, Member=$8.50
+  4-person: Leader=$10, Member=$6
+
+LKQ ($45 rate):
+  2-person: Leader=$25, Member=$20
+  3-person: Leader=$17, Member=$14
+  4-person: Leader=$15, Member=$10
+
+SPECIALTY: Manual entry, manager approval required.
+
+CALCULATION:
+  row_total = (leaderPay + memberPay × (teamSize-1)) × qty
+
+════════════════════════════════════════════════════════════
+SCREEN 1 — LOGIN PAGE
+════════════════════════════════════════════════════════════
+
+Full page, centered, bg #F9FAFB.
+
+Top of card:
+  Large: 💧 Spiffy Cleaning Company
+  Subtitle: Payroll Tracker
+  Both in #0D1B4E, clean typography
+
+White card, rounded-2xl, shadow-md, max-w-sm centered.
+
+Simple two fields:
+  Email (large input, easy to tap)
+  Password (with show/hide eye icon)
+  "Sign In" button — full width, bg #0D1B4E, 
+  text white, large, rounded-lg
+
+BELOW the login card:
+  Section: "Select Your Account"
+  Show tiles for every team member.
+  Each tile: name (large), role badge, tap to sign in.
+  
+  Make tiles BIG — these are for phone use.
+  Minimum 56px height. Large font. Easy tap target.
+  
+  Group: [Dexter Thomas — Owner] at top, 
+  then [Team] below as a grid.
+  
+  Tapping a tile immediately logs them in 
+  (no password needed for demo — just one tap).
+
+Small note at bottom: 
+  "Demo Mode — Data resets on refresh"
+  in gray small text.
+
+════════════════════════════════════════════════════════════
+SCREEN 2 — EMPLOYEE WEEK VIEW
+════════════════════════════════════════════════════════════
+
+This is what team members use daily on their phones.
+Keep it EXTREMELY simple. Dexter's team are 
+non-technical field workers.
+
+PAGE HEADER (white card):
+  Left: Employee name (large, bold, #0D1B4E)
+  Right: Week dates (Jun 2 – Jun 8, 2026)
+  
+  Below header in same card:
+  "Who was your team leader?" 
+  Large dropdown showing all team members.
+  Default to Alejandro or Jesenia Fernandez 
+  (most hours on timesheet = likely leaders).
+  
+  "How many people on your team?"
+  Three big tap buttons: [  2  ] [  3  ] [  4  ]
+  Selected = bg #0D1B4E text white
+  Unselected = bg white border gray
+
+IMPORTANT: Keep team leader and team size at the TOP
+and apply them to ALL entries for the day.
+Don't ask per-row — ask once at top.
+This matches how Dexter's paper form works.
+
+DAILY JOB ENTRY:
+  Organized by day of week (Mon through Sun).
+  
+  Each day shows as a section with:
+  - Day name header (Monday, Tuesday, etc.) 
+    in light gray bar, left aligned, bold
+  - List of job cards for that day
+  - "+ Add Job" button at bottom of each day section
+
+  JOB CARD (one per job):
+  Design like a Jobber job card — white, rounded, 
+  shadow-sm, clear fields.
+  
+  Field 1: PROPERTY
+    Large searchable dropdown (type to search)
+    Shows all 33 properties
+    Placeholder: "Which property?"
+  
+  Field 2: JOB TYPE  
+    Large dropdown with Jobber-style names
+    Placeholder: "What type of job?"
+  
+  Field 3: TIER (only shows for Clubhouse/Club Hallway)
+    Appears instantly when those job types selected
+    Big labeled buttons: [$150] [$120] [$80]
+    or [$725] [$500]
+    Label above: "Select the rate for this job"
+  
+  Field 4: HOW MANY? (Quantity)
+    Large number stepper: [−] [  2  ] [+]
+    Default 1. Easy +/− buttons, no keyboard needed.
+    Label: "How many units / buildings / etc?"
+  
+  AUTO-CALCULATED DISPLAY (shows after job type + qty):
+    Clean info box:
+    ┌────────────────────────────────┐
+    │ Rate: $105  × 2 units = $210  │
+    │ Your Pay (Leader): $76.00     │  
+    │ Each Member: $67.00           │
+    └────────────────────────────────┘
+    Show in green text, friendly readable format.
+    
+  Bottom of card:
+    Status badge:
+      ● yellow "Waiting for approval" 
+      ● green  "✓ Approved by Dexter"
+    
+    Manager approval toggle (LARGE, obvious):
+      Disabled / grayed out for employee role
+      Only manager can toggle
+    
+    Trash icon (far right, gray) — delete job
+
+  ADD JOB BUTTON for each day:
+  "+ Add a Job for Monday" — full width, 
+  dashed border, cyan text. Big and obvious.
+
+WEEKLY PAY SUMMARY (sticky bottom bar on mobile):
+  Always visible at bottom of screen.
+  Shows running total of approved entries.
+  Tap to expand full summary card.
+  
+  Expanded summary:
+  ┌──────────────────────────────────────┐
+  │  YOUR WEEK SUMMARY                   │
+  │                                      │
+  │  Jobs Pay (approved):   $1,260.00    │
+  │  + Drive Pay:           +  $100.00   │
+  │  - Deductions:          -    $0.00   │
+  │  ─────────────────────────────────   │
+  │  TOTAL PAY:             $1,360.00    │
+  │                                      │
+  │  ⏳ Waiting for Dexter's approval    │
+  └──────────────────────────────────────┘
+
+PRE-POPULATED DEMO DATA for Jesenia Fernandez
+(she had most hours — 9h 38m — likely most activity):
+  Week of June 2–8, 2026
+  
+  Tuesday Jun 3:
+    Woodview Commons — Clubhouse/Hallway — 3-person — Qty 1
+    Conner Creek — Building Cleaning — 3-person — Qty 1
+  
+  Wednesday Jun 4:
+    Cherokee Hill — Unit Cleaning — 3-person — Qty 3
+    Cherokee Hill — Unit Cleaning — 3-person — Qty 2
+  
+  Thursday Jun 5:
+    LKQ Corp — LKQ — 3-person — Qty 2
+    Bishop Moore — Building Cleaning — 3-person — Qty 1
+  
+  Mark Tue/Wed as approved (green), Thu as pending (yellow).
+
+════════════════════════════════════════════════════════════
+SCREEN 3 — EMPLOYEE HISTORY
+════════════════════════════════════════════════════════════
+
+Simple list of past weeks. Jobber-style job list layout.
+
+Each week = one row/card:
+  Left: Week dates
+  Center: X jobs | $X,XXX total pay
+  Right: Status badge (Approved ✓ or 🔒 Locked)
+  Tap to expand and see all entries (read-only)
+
+Pre-populate 2 locked past weeks for Jesenia
+with realistic totals ($1,100 and $1,340).
+
+════════════════════════════════════════════════════════════
+SCREEN 4 — MANAGER OVERVIEW (Dexter's main view)
+════════════════════════════════════════════════════════════
+
+This is Dexter's home screen. Model it after Jobber's
+main workflow dashboard.
+
+TOP SUMMARY CARDS (2×2 grid, tap each to drill down):
+  ┌──────────────────┬──────────────────┐
+  │ 💰 Total Payroll │ ⚠ Needs Review   │
+  │ $4,280 this week │ 14 entries        │
+  │ 7 employees      │ tap to review →  │
+  ├──────────────────┼──────────────────┤
+  │ 🔴 Collections  │ ✅ Approved       │
+  │ $55,400 past due │ 2 of 7 complete  │
+  │ 107 invoices     │                  │
+  └──────────────────┴──────────────────┘
+  
+  Collections card: red background, white text.
+  Tap → goes to /manager/collections screen.
+
+EMPLOYEE LIST (below cards):
+  Header: "Week of June 2–8, 2026"
+  Week navigation arrows ← →
+  
+  One row per employee (Jobber job list style):
+  ● [status dot] [Name]    [X jobs] [status badge] [$total] [Review →]
+  
+  Status dot:
+    red    = has unapproved entries
+    yellow = all entered, not yet approved
+    green  = fully approved
+    gray   = locked
+  
+  "Review →" button opens employee detail.
+  
+  Rows tap to open employee detail.
+  Sort: unapproved first, then by name.
+
+UNAPPROVED ALERT BANNER at very top if any exist:
+  Red banner: "14 job entries need your approval 
+  across 5 employees" with "Review Now →" link.
+
+════════════════════════════════════════════════════════════
+SCREEN 5 — MANAGER EMPLOYEE DETAIL
+════════════════════════════════════════════════════════════
+
+Header shows breadcrumb: Team > Jesenia Fernandez
+Week dates. Navigation arrows to prev/next employee.
+
+Shows same view as employee week view BUT:
+
+1. All fields are read-only for Dexter 
+   (he shouldn't be editing entries, just approving)
+
+2. APPROVAL TOGGLE per row:
+   Large, obvious toggle switch or button.
+   NOT a small checkbox.
+   
+   Use a Jobber-style action button:
+   Unapproved: [ ○ Approve ] outlined yellow button
+   Approved:   [ ✓ Approved ] filled green button
+   
+   Tapping "Approve" → immediately turns green.
+   Green row background. No page reload needed.
+   
+3. "APPROVE ALL" button at top right:
+   If multiple unapproved, show 
+   "Approve All (X entries)" button.
+   Confirm dialog: simple, large text:
+   "Approve all 6 jobs for Jesenia?
+    Total pay: $847.00
+    [Cancel] [Yes, Approve All]"
+
+4. WEEKLY APPROVAL at bottom:
+   Shows after all rows approved.
+   Big prominent button:
+   "✓ Approve This Week — Final Pay: $947.00"
+   Green background, large, full width.
+   
+   Confirm: "Approve Jesenia's week?
+   Jobs: $847 + Drive Pay: $100 = $947.00
+   [Cancel] [Approve Week]"
+
+5. LOCK WEEK (after week approved):
+   "🔒 Lock Week" button — gray, smaller.
+   Confirm: "Lock this week permanently? 
+   This cannot be changed."
+
+════════════════════════════════════════════════════════════
+SCREEN 6 — COLLECTIONS DASHBOARD
+════════════════════════════════════════════════════════════
+
+This is the most powerful screen for the demo.
+Use REAL past-due invoice data from Dexter's Jobber.
+
+Header: "Outstanding Collections"
+Subheader: "$55,400 across 107 invoices"
+Red alert bar at top.
+
+SUMMARY STATS (3 cards):
+  Total Past Due: $55,400  (red)
+  Invoices: 107            (orange)
+  Oldest: 21+ days        (red)
+
+PAST DUE INVOICE TABLE:
+  Columns: Client | Invoice # | Due Date | Amount | Days Late | Action
+
+  Pre-load ALL of these REAL invoices from Jobber
+  (sorted by amount descending):
+
+  Woodview Commons      #189  Jun 03  $4,080  6 days
+  Woodview Commons      #208  Jun 03  $1,280  6 days
+  Woodview Commons      #209  Jun 03  $225    6 days
+  Carriage Cove         #187  Jun 03  $1,800  6 days
+  LKQ Corp              #191  Jun 03  $1,450  6 days
+  Conner Creek          #147  May 29  $1,950  11 days
+  Huntley Manor         #148  May 29  $1,200  11 days
+  Knollwood Village     #178  May 29  $1,250  11 days
+  Bloomfield Square     #165  May 29  $1,000  11 days
+  Cranbrooke Centre     #157  May 29  $1,065  11 days
+  Joy West Manor        #154  May 29  $450    11 days
+  Joy West Manor        #232  Jun 04  $450    5 days
+  Kings Pointe          #161  May 29  $600    11 days
+  Kings Pointe          #222  Jun 03  $225    6 days
+  KMG Huron Vista       #158  May 29  $600    11 days
+  KMG Huron Vista       #136  May 25  $150    15 days
+  Carriage Cove         #166  May 29  $695    11 days
+  Carriage Cove         #184  May 29  $150    11 days
+  Village Club of
+    Farmington Hills    #212  Jun 03  $465    6 days
+  Central Park Estate   #173  May 29  $375    11 days
+  Central Park Estate   #217  Jun 03  $400    6 days
+  Auburn Gates          #225  Jun 03  $550    6 days
+  West Oaks             #174  May 29  $310    11 days
+  West Oaks             #223  Jun 03  $310    6 days
+  Berkshire Apartments  #168  May 29  $450    11 days
+  Kensington Park       #171  May 29  $525    11 days
+  Bloomfield Square     #165  May 29  $1,000  11 days
+  Thornberry Apartments #197  Jun 03  $275    6 days
+  Thornberry Apartments #149  May 29  $275    11 days
+  Farmington View       #159  May 29  $300    11 days
+  Windmill Pointe       #195  Jun 03  $125    6 days
+  Windmill Pointe       #140  May 25  $125    15 days
+  Richmond Club         #196  Jun 03  $225    6 days
+  Richmond Club         #139  May 25  $225    15 days
+  Crystal Loft          #201  Jun 03  $400    6 days
+  Crystal Loft          #163  May 29  $200    11 days
+  Crystal Loft          #230  Jun 03  $200    6 days
+  Chidester Place       #186  May 31  $425    9 days
+  Cherokee Hill         #146  Jun 04  $135    5 days
+  Cherokee Hill         #218  Jun 03  $145    6 days
+  Cherokee Hill         #179  May 29  $155    11 days
+  Cherokee Hill         #146  May 26  $155    14 days
+  Arbor Manor           #210  Jun 03  $185    6 days
+  LR Plymouth Heritage  #220  Jun 03  $155    6 days
+  Ryan Court            #177  May 29  $175    11 days
+  The Cove On 13        #176  May 29  $495    11 days
+  Across The Park       #143  May 26  $350    14 days
+  Bishop Moore          #139  May 25  $225    15 days
+  Apple Ridge Apts      #85   May 29  $1,000  11 days
+  Left Field            #28   Jun 16  $250    upcoming
+
+  Color code "Days Late":
+    1–7 days: yellow badge
+    8–14 days: orange badge
+    15+ days: red badge
+
+  "Action" column — two small buttons per row:
+    [✉ Send Reminder] — outline button
+    [✓ Mark Paid] — green button
+  
+  For demo purposes, "Send Reminder" shows a 
+  success toast: "Reminder sent to [Client]!"
+  "Mark Paid" removes the row with green confirmation.
+
+FILTER BAR above table:
+  [All] [7+ Days] [14+ Days] [30+ Days]
+  Search by client name.
+
+BOTTOM CALLOUT BOX:
+  ┌─────────────────────────────────────────┐
+  │  💡 RECOVERY OPPORTUNITY                │
+  │  Setting up automated follow-up in Keap │
+  │  could recover $27,700–$41,550 of this  │
+  │  balance within 30 days.                │
+  │  Talk to Ryan Cole to set this up →     │
+  └─────────────────────────────────────────┘
+  Cyan border, light blue background.
+  This is part of the sales pitch for the meeting.
+
+════════════════════════════════════════════════════════════
+SCREEN 7 — MANAGER DASHBOARD (Analytics)
+════════════════════════════════════════════════════════════
+
+Model after Jobber's Business Performance section.
+
+4 metric cards across top:
+  Total Payroll This Week | Unapproved Count
+  Top Property (labor cost) | Jobs Today
+
+PAYROLL BY EMPLOYEE table:
+  Name | Jobs | Approved | Pending | Total | Status
+
+LABOR BY PROPERTY table:
+  Property | Jobs | Labor Cost | % of Total
+  Top entry will be Great Lakes, Woodview Commons, etc.
+
+════════════════════════════════════════════════════════════
+SCREEN 8 — PAY RATES (Admin/Settings)
+════════════════════════════════════════════════════════════
+
+Label it "Pay Rate Reference" not "Admin."
+Show the full rate matrix as a clean reference table.
+Read-only. Organized by job type.
+Label at top: "These rates are set by Dexter. 
+Contact your manager for questions."
+
+════════════════════════════════════════════════════════════
+PRE-POPULATED DEMO DATA — FULL WEEK
+════════════════════════════════════════════════════════════
+
+Seed a realistic full week (Jun 2–8, 2026) with 
+entries for multiple team members so Dexter can see 
+his real team in the system.
+
+JESENIA FERNANDEZ (9h 38m in Jobber — heavy day):
+  Tue: Woodview Commons — Clubhouse/Hallway — 3p — Qty 1 — APPROVED
+  Tue: Conner Creek — Building Cleaning — 3p — Qty 1 — APPROVED
+  Wed: Cherokee Hill — Unit Cleaning — 3p — Qty 3 — APPROVED
+  Thu: LKQ Corp — LKQ — 3p — Qty 2 — PENDING
+  Thu: Bishop Moore — Building Cleaning — 3p — Qty 1 — PENDING
+
+ALEJANDRO (8h 47m):
+  Mon: Auburn Gates — Unit Cleaning — 3p — Qty 4 — APPROVED
+  Mon: Knollwood Village — Unit Cleaning — 3p — Qty 6 — APPROVED
+  Tue: Kings Pointe — Clubhouse/Hallway — 3p — Qty 1 — PENDING
+  Wed: West Oaks — Unit Cleaning — 3p — Qty 3 — PENDING
+
+GISSELL LILIETH LÓPEZ (7h 35m):
+  Mon: Woodview Commons — Clubhouse/Hallway — 4p — Qty 1 — APPROVED
+  Tue: Richmond Club — Building Cleaning — 4p — Qty 2 — PENDING
+  Wed: Thornberry Apartments — Clubhouse — $120 tier — 4p — Qty 1 — PENDING
+
+SUGEYDI RIVERA (7h 39m):
+  Mon: Cherry Hill — Unit Cleaning — 2p — Qty 5 — APPROVED
+  Tue: Windmill Pointe — Hallway Cleaning — 2p — Qty 1 — PENDING
+
+SUJEYDI JARQUIN (5h 49m):
+  Tue: Joy West Manor — Clubhouse/Hallway — 3p — Qty 1 — PENDING
+  Wed: Carriage Cove — Building Cleaning — 3p — Qty 1 — PENDING
+
+LINDA RIVERA and ONEYDA: no entries this week
+  Show them in manager overview as "No entries yet"
+  with gray status dot.
+
+════════════════════════════════════════════════════════════
+SIMPLIFICATION RULES FOR NON-TECH USERS
+════════════════════════════════════════════════════════════
+
+Dexter is NOT tech-savvy. Build for this explicitly:
+
+1. NEVER use jargon. Not "submit," use "Save Job."
+   Not "authenticate," use "Sign In."
+   Not "record," use "job entry."
+
+2. ALL interactive elements minimum 48px touch height.
+   No tiny checkboxes — use large toggles or buttons.
+
+3. Every action has a CLEAR confirmation. 
+   "You approved 3 jobs for Jesenia. Total: $847."
+   Not just "Success."
+
+4. Error states are friendly:
+   "Looks like you forgot to pick a property. 
+   Which property was this job at?"
+   Not "Property field is required."
+
+5. Success states are enthusiastic:
+   "✅ Week approved! Jesenia's pay: $947.00"
+
+6. Show the math visibly at all times.
+   Never make him wonder how a number was calculated.
+
+7. The approval flow is ONE TAP per job on mobile:
+   Big green "Approve" button per row.
+   "Approve All" for the whole week.
+   That's it.
+
+8. Never show more than 3 action options at once.
+
+════════════════════════════════════════════════════════════
+DEMO MODE
+════════════════════════════════════════════════════════════
+
+Thin banner below navbar (dismissible):
+  Background #1DC8FF, text #0D1B4E, font-bold
+  "🎯 Demo Mode — Showing week of Jun 2–8, 2026 
+   with real Spiffy team and properties"
+
+════════════════════════════════════════════════════════════
+FILE STRUCTURE
+════════════════════════════════════════════════════════════
+
+src/
+  main.tsx
+  App.tsx
+  index.css
+  
+  data/
+    employees.ts      (real team from timesheet)
+    properties.ts     (all 33 real properties)
+    payRates.ts       (full exact matrix)
+    invoices.ts       (all past-due invoice data)
+    demoWeek.ts       (pre-seeded week entries)
+  
+  types/index.ts
+  
+  utils/
+    storage.ts
+    payCalc.ts
+    auth.ts
+  
+  components/
+    Sidebar.tsx       (desktop left nav)
+    BottomTabs.tsx    (mobile bottom nav)
+    StatusDot.tsx     (● green/red/yellow/gray)
+    StatusBadge.tsx
+    Toast.tsx
+    ConfirmDialog.tsx
+    JobCard.tsx       (single job entry card)
+    WeeklySummaryBar.tsx  (sticky bottom on mobile)
+    PropertySearch.tsx    (searchable dropdown)
+    TierSelector.tsx      (clubhouse/hallway tier buttons)
+    QuantityStepper.tsx   (−/+ stepper for quantity)
+  
+  pages/
+    LoginPage.tsx
+    EmployeeWeekPage.tsx
+    EmployeeHistoryPage.tsx
+    ManagerOverviewPage.tsx
+    ManagerEmployeeDetailPage.tsx
+    ManagerDashboardPage.tsx
+    CollectionsPage.tsx
+    PayRatesPage.tsx
+
+════════════════════════════════════════════════════════════
+FINAL DEMO CHECKLIST
+════════════════════════════════════════════════════════════
+
+□ Tap any name tile on login → instant sign in
+□ Jesenia's week loads with real data, real properties
+□ Adding a job: property search works, rates auto-fill
+□ Clubhouse tier selector appears/hides correctly
+□ Quantity stepper works with +/- buttons (no typing)
+□ Pay calculation shows immediately, clearly
+□ Dexter signs in, sees real team with real names
+□ Dexter can approve a job in ONE TAP
+□ "Approve All" works with confirmation
+□ Collections screen shows real $55,400 data
+□ Collections shows real client names and amounts
+□ "Send Reminder" toast works
+□ All 33 properties in searchable dropdown
+□ Mobile layout fits phone screen without scrolling issues
+□ All status dots are correct colors
+□ Weekly summary always visible on mobile
+□ Language is friendly, not technical
+□ Color scheme: navy #0D1B4E + cyan #1DC8FF throughout
+□ Looks and feels like Jobber but Spiffy branded

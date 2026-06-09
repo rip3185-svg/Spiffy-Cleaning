@@ -15,6 +15,7 @@ import ManagerOverviewPage from "@/pages/ManagerOverviewPage";
 import ManagerEmployeeDetailPage from "@/pages/ManagerEmployeeDetailPage";
 import CollectionsPage from "@/pages/CollectionsPage";
 import ManagerDashboardPage from "@/pages/ManagerDashboardPage";
+import FranchiseDashboardPage from "@/pages/FranchiseDashboardPage";
 import PayRatesPage from "@/pages/PayRatesPage";
 import { AppLayout } from "@/components/layout/AppLayout";
 import NotFound from "@/pages/not-found";
@@ -92,6 +93,9 @@ function Router() {
         {/* Manager Routes */}
         <Route path="/manager/overview">
           {() => <ProtectedRoute component={ManagerOverviewPage} allowedRoles={['manager', 'admin']} />}
+        </Route>
+        <Route path="/manager/franchises">
+          {() => <ProtectedRoute component={FranchiseDashboardPage} allowedRoles={['manager', 'admin']} />}
         </Route>
         <Route path="/manager/employee/:id">
           {() => <ProtectedRoute component={ManagerEmployeeDetailPage} allowedRoles={['manager', 'admin']} />}

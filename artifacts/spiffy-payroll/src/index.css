@@ -127,6 +127,23 @@
   --spacing: 0.25rem;
 }
 
+.card-elevated {
+  box-shadow: 0 2px 8px rgba(13,27,78,0.08), 0 0 1px rgba(13,27,78,0.06);
+}
+.card-hover {
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 8px 24px rgba(13,27,78,0.12), 0 0 1px rgba(13,27,78,0.08);
+  transform: translateY(-1px);
+}
+.spiffy-gradient-text {
+  background: linear-gradient(135deg, #0D1B4E 0%, #1DC8FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .dark {
   --background: 234 40% 14%;
   --foreground: 210 20% 98%;

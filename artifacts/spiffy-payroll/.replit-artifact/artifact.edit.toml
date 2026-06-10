@@ -1,0 +1,35 @@
+kind = "web"
+previewPath = "/"
+title = "Spiffy Cleaning Payroll Tracker"
+version = "1.0.0"
+id = "artifacts/spiffy-payroll"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23936
+
+[services.development]
+run = "pnpm --filter @workspace/spiffy-payroll run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/spiffy-payroll", "run", "build" ]
+publicDir = "artifacts/spiffy-payroll/dist/public"
+serve = "static"
+
+[services.production.build.env]
+BASE_PATH = "/"
+NODE_ENV = "production"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23936"
+BASE_PATH = "/"

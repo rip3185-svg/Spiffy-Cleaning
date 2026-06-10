@@ -3,7 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { getSession, logout, isManager } from '@/utils/auth';
 import { BookOpen, CalendarDays, Home, BarChart3, DollarSign, Settings, LogOut, Menu, X, Building2 } from 'lucide-react';
 import logoPath from '@assets/spiffy_cleaning_logo_transparent.png';
-import { Button } from 'react-day-picker';
+import { Button } from '@/components/ui/button';
 
 interface AppLayoutProps {
   children: React.ReactNode;

@@ -29,14 +29,15 @@ export const DEMO_JOBS: JobEntry[] = [
 ];
 
 export const DEMO_WEEK_SUMMARIES: WeekSummary[] = [
-  {employeeId:'jesenia',weekStart:'2026-05-19',totalPay:1100,drivePay:0,deductions:0,status:'locked',lockedAt:'2026-05-25T00:00:00Z'},
-  {employeeId:'jesenia',weekStart:'2026-05-26',totalPay:1340,drivePay:0,deductions:0,status:'locked',lockedAt:'2026-06-01T00:00:00Z'},
+  {employeeId:'jesenia',weekStart:'2026-05-19',totalPay:1100,drivePay:100,deductions:0,status:'locked',lockedAt:'2026-05-25T00:00:00Z'},
+  {employeeId:'jesenia',weekStart:'2026-05-26',totalPay:1340,drivePay:100,deductions:0,status:'locked',lockedAt:'2026-06-01T00:00:00Z'},
 ];
 
 export function seedDemoData(): void {
-  const seeded = localStorage.getItem('spiffy_demo_seeded');
+  const seeded = localStorage.getItem('spiffy_demo_seeded_v2');
   if (seeded) return;
+  localStorage.removeItem('spiffy_demo_seeded');
   localStorage.setItem('spiffy_jobs', JSON.stringify(DEMO_JOBS));
   localStorage.setItem('spiffy_weeks', JSON.stringify(DEMO_WEEK_SUMMARIES));
-  localStorage.setItem('spiffy_demo_seeded', 'true');
+  localStorage.setItem('spiffy_demo_seeded_v2', 'true');
 }

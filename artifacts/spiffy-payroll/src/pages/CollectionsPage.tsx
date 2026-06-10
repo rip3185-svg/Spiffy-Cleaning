@@ -120,9 +120,10 @@ export default function CollectionsPage() {
                 let badgeText = "Upcoming";
                 
                 if (isLate) {
-                  badgeText = `${inv.daysLate} days late`;
-                  if (inv.daysLate >= 15) badgeClass = "bg-red-100 text-red-700 font-bold";
-                  else if (inv.daysLate >= 8) badgeClass = "bg-orange-100 text-orange-700";
+                  const daysLate = Number(inv.daysLate);
+                  badgeText = `${daysLate} days late`;
+                  if (daysLate >= 15) badgeClass = "bg-red-100 text-red-700 font-bold";
+                  else if (daysLate >= 8) badgeClass = "bg-orange-100 text-orange-700";
                   else badgeClass = "bg-yellow-100 text-yellow-800";
                 }
 

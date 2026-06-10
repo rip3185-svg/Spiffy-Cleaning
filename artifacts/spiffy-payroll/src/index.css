@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
@@ -68,18 +68,18 @@
 }
 
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
+  --button-outline: rgba(0,0,0,.10);
+  --badge-outline: rgba(0,0,0,.05);
   --opaque-button-border-intensity: -8;
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  --elevate-1: rgba(0,0,0,.03);
+  --elevate-2: rgba(0,0,0,.08);
 
-  --background: 210 20% 98%;
+  --background: 225 40% 96%;
   --foreground: 234 40% 14%;
-  --border: 220 13% 91%;
+  --border: 220 20% 88%;
   --card: 0 0% 100%;
   --card-foreground: 234 40% 14%;
-  --card-border: 220 13% 91%;
+  --card-border: 220 20% 90%;
   --sidebar: 228 72% 18%;
   --sidebar-foreground: 0 0% 100%;
   --sidebar-border: 228 60% 25%;
@@ -90,20 +90,20 @@
   --sidebar-ring: 194 100% 56%;
   --popover: 0 0% 100%;
   --popover-foreground: 234 40% 14%;
-  --popover-border: 220 13% 91%;
+  --popover-border: 220 20% 88%;
   --primary: 228 72% 18%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 210 20% 97%;
+  --secondary: 220 30% 95%;
   --secondary-foreground: 228 72% 18%;
-  --muted: 210 20% 96%;
-  --muted-foreground: 220 9% 46%;
+  --muted: 220 25% 94%;
+  --muted-foreground: 220 12% 46%;
   --accent: 194 100% 56%;
   --accent-foreground: 228 72% 18%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --input: 220 13% 91%;
+  --input: 220 20% 88%;
   --ring: 194 100% 56%;
-  
+
   --chart-1: 194 100% 56%;
   --chart-2: 228 72% 18%;
   --chart-3: 160 84% 39%;
@@ -113,90 +113,45 @@
   --app-font-sans: 'Inter', sans-serif;
   --app-font-serif: Georgia, serif;
   --app-font-mono: Menlo, monospace;
-  --radius: .5rem;
-  
-  --shadow-2xs: 0px 1px 2px rgba(13,27,78,0.06);
-  --shadow-xs: 0px 1px 3px rgba(13,27,78,0.08), 0px 1px 2px rgba(13,27,78,0.06);
-  --shadow-sm: 0px 2px 6px rgba(13,27,78,0.10), 0px 1px 2px rgba(13,27,78,0.08);
-  --shadow: 0px 3px 8px rgba(13,27,78,0.12), 0px 1px 3px rgba(13,27,78,0.08);
-  --shadow-md: 0px 4px 12px rgba(13,27,78,0.14), 0px 2px 4px rgba(13,27,78,0.08);
-  --shadow-lg: 0px 8px 20px rgba(13,27,78,0.16), 0px 3px 6px rgba(13,27,78,0.08);
-  --shadow-xl: 0px 16px 32px rgba(13,27,78,0.20), 0px 4px 8px rgba(13,27,78,0.10);
-  --shadow-2xl: 0px 24px 48px rgba(13,27,78,0.25), 0px 8px 16px rgba(13,27,78,0.12);
+  --radius: .625rem;
+
+  --shadow-2xs: 0px 1px 2px rgba(13,27,78,0.07);
+  --shadow-xs: 0px 1px 3px rgba(13,27,78,0.09), 0px 1px 2px rgba(13,27,78,0.06);
+  --shadow-sm: 0px 2px 6px rgba(13,27,78,0.11), 0px 1px 2px rgba(13,27,78,0.08);
+  --shadow: 0px 3px 8px rgba(13,27,78,0.13), 0px 1px 3px rgba(13,27,78,0.08);
+  --shadow-md: 0px 4px 14px rgba(13,27,78,0.15), 0px 2px 4px rgba(13,27,78,0.09);
+  --shadow-lg: 0px 8px 22px rgba(13,27,78,0.17), 0px 3px 6px rgba(13,27,78,0.09);
+  --shadow-xl: 0px 16px 36px rgba(13,27,78,0.21), 0px 4px 8px rgba(13,27,78,0.11);
+  --shadow-2xl: 0px 24px 52px rgba(13,27,78,0.26), 0px 8px 18px rgba(13,27,78,0.13);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
 
-.card-elevated {
-  box-shadow: 0 4px 16px rgba(13,27,78,0.12), 0 1px 3px rgba(13,27,78,0.08);
-}
-.card-hover {
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-.card-hover:hover {
-  box-shadow: 0 12px 32px rgba(13,27,78,0.18), 0 2px 6px rgba(13,27,78,0.10);
-  transform: translateY(-2px);
-}
-.spiffy-gradient-text {
-  background: linear-gradient(135deg, #0D1B4E 0%, #1DC8FF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Punchy interactive buttons */
-.btn-spiffy {
-  background: linear-gradient(135deg, #0D1B4E 0%, #1a3282 100%);
-  color: white;
-  border: none;
-  transition: all 0.15s ease;
-}
-.btn-spiffy:hover {
-  background: linear-gradient(135deg, #1DC8FF 0%, #00aaee 100%);
-  color: #0D1B4E;
-  box-shadow: 0 6px 20px rgba(29,200,255,0.35);
-  transform: translateY(-1px);
-}
-.btn-spiffy:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: none;
-}
-
-/* Approve/action button pulse */
-@keyframes spiffy-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(29,200,255,0.4); }
-  50% { box-shadow: 0 0 0 6px rgba(29,200,255,0); }
-}
-.btn-pulse {
-  animation: spiffy-pulse 2s ease-in-out infinite;
-}
-
-/* Stat card shine on hover */
+/* ─── Utility: stat card with shine sweep ─── */
 .stat-card {
   position: relative;
   overflow: hidden;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
 }
 .stat-card::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -60%;
+  top: -60%;
+  left: -70%;
   width: 40%;
-  height: 200%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  height: 220%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
   transform: skewX(-20deg);
-  transition: left 0.5s ease;
+  transition: left 0.55s ease;
+  pointer-events: none;
 }
-.stat-card:hover::before {
-  left: 130%;
-}
+.stat-card:hover::before { left: 135%; }
 .stat-card:hover {
-  box-shadow: 0 10px 28px rgba(13,27,78,0.16);
+  box-shadow: 0 12px 32px rgba(13,27,78,0.18);
   transform: translateY(-2px);
 }
 
-/* Row hover highlight */
+/* ─── Utility: row hover with cyan left bar ─── */
 .row-interactive {
   transition: background 0.12s ease, box-shadow 0.12s ease;
   cursor: pointer;
@@ -206,14 +161,61 @@
   box-shadow: inset 3px 0 0 #1DC8FF;
 }
 
-/* Status dot pulse for pending */
+/* ─── Utility: card lift on hover ─── */
+.card-hover {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 14px 36px rgba(13,27,78,0.16), 0 2px 6px rgba(13,27,78,0.10);
+  transform: translateY(-2px);
+}
+
+/* ─── Gradient text ─── */
+.spiffy-gradient-text {
+  background: linear-gradient(135deg, #0D1B4E 0%, #1DC8FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Primary button ─── */
+.btn-spiffy {
+  background: linear-gradient(135deg, #0D1B4E 0%, #1a3282 100%);
+  color: white;
+  border: none;
+  transition: all 0.15s ease;
+}
+.btn-spiffy:hover {
+  background: linear-gradient(135deg, #1DC8FF 0%, #00aaee 100%);
+  color: #0D1B4E;
+  box-shadow: 0 6px 22px rgba(29,200,255,0.38);
+  transform: translateY(-1px);
+}
+.btn-spiffy:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
+}
+
+/* ─── Cyan pulse (for CTA buttons) ─── */
+@keyframes spiffy-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(29,200,255,0.45); }
+  50% { box-shadow: 0 0 0 7px rgba(29,200,255,0); }
+}
+.btn-pulse { animation: spiffy-pulse 2.2s ease-in-out infinite; }
+
+/* ─── Pending dot pulse ─── */
 @keyframes dot-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(0.8); }
+  50% { opacity: 0.55; transform: scale(0.75); }
 }
-.status-dot-pending {
-  animation: dot-pulse 1.8s ease-in-out infinite;
+.status-dot-pending { animation: dot-pulse 1.8s ease-in-out infinite; }
+
+/* ─── New service badge glow ─── */
+@keyframes new-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.3); }
+  50% { box-shadow: 0 0 12px 2px rgba(124,58,237,0.15); }
 }
+.new-service-glow { animation: new-glow 3s ease-in-out infinite; }
 
 .dark {
   --background: 234 40% 14%;
@@ -253,11 +255,6 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply font-sans antialiased bg-background text-foreground;
-  }
+  * { @apply border-border; }
+  body { @apply font-sans antialiased bg-background text-foreground; }
 }

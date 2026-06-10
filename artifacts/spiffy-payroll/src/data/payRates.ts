@@ -21,12 +21,18 @@ export const CLUB_HALLWAY_RATES: Record<string, Record<TeamSize, RateRow>> = {
 };
 
 export const JOB_TYPE_OPTIONS = [
-  { value:'units',        label:'Unit Cleaning (Units)',                   baseRate:105 },
-  { value:'building',     label:'Building Cleaning (Building/Enterprise)', baseRate:100 },
-  { value:'hallway',      label:'Hallway Cleaning (Small Hallway)',        baseRate:175 },
-  { value:'clubhouse',    label:'Clubhouse Cleaning',                      baseRate:null },
-  { value:'club_hallway', label:'Clubhouse/Hallway Cleaning',              baseRate:null },
-  { value:'touchup',      label:'Touch-Up',                                baseRate:30 },
-  { value:'lkq',          label:'LKQ',                                     baseRate:45 },
-  { value:'specialty',    label:'Specialty / Other',                       baseRate:null },
+  { value:'units',           label:'Unit Cleaning',              baseRate:105,  group:'Standard' },
+  { value:'building',        label:'Building / Enterprise',      baseRate:100,  group:'Standard' },
+  { value:'hallway',         label:'Hallway (Small)',            baseRate:175,  group:'Standard' },
+  { value:'clubhouse',       label:'Clubhouse Cleaning',         baseRate:null, group:'Standard' },
+  { value:'club_hallway',    label:'Clubhouse + Hallway',        baseRate:null, group:'Standard' },
+  { value:'touchup',         label:'Touch-Up',                   baseRate:30,   group:'Standard' },
+  { value:'lkq',             label:'LKQ',                        baseRate:45,   group:'Standard' },
+  { value:'carpet_cleaning', label:'Carpet Cleaning ✦ New',      baseRate:null, group:'Additional Services' },
+  { value:'painting',        label:'Apartment Painting ✦ New',   baseRate:null, group:'Additional Services' },
+  { value:'specialty',       label:'Specialty / Other',          baseRate:null, group:'Additional Services' },
 ];
+
+// Flat-rate job types where user enters pay directly
+export const FLAT_RATE_TYPES = new Set(['carpet_cleaning', 'painting', 'specialty']);
+export const WEEKLY_DRIVE_PAY = 100;

@@ -53,7 +53,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <div className="flex h-screen w-full overflow-hidden" style={{ background: '#F0F2F8' }}>
+    <div className="flex h-screen w-full overflow-hidden" style={{ background: 'linear-gradient(145deg, #eef2fb 0%, #e8eef8 40%, #edf4fb 100%)' }}>
 
       {/* ── Desktop Sidebar ── */}
       <aside

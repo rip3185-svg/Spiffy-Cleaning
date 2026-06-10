@@ -48,8 +48,8 @@ export default function CollectionsPage() {
   return (
     <div className="pb-24">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#0D1B4E]">Outstanding Collections</h1>
-        <p className="text-gray-500">${totalPastDue.toLocaleString()} across {pastDueCount} invoices</p>
+        <h1 className="text-2xl font-bold text-white">Outstanding Collections</h1>
+        <p className="text-white/50 text-sm mt-0.5">${totalPastDue.toLocaleString()} across {pastDueCount} invoices</p>
       </div>
 
       <div className="bg-red-600 text-white rounded-xl p-4 mb-6 flex items-start gap-3 shadow-md">

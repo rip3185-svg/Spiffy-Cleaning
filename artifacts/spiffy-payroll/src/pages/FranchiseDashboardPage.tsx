@@ -15,8 +15,8 @@ export default function FranchiseDashboardPage() {
   return (
     <div className="pb-24">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#0D1B4E]">Franchise Network</h1>
-        <p className="text-gray-500">{FRANCHISES.length} locations across Michigan</p>
+        <h1 className="text-2xl font-bold text-white">Franchise Network</h1>
+        <p className="text-white/50 text-sm mt-0.5">{FRANCHISES.length} locations across Michigan</p>
       </div>
 
       {/* Network Health Bar */}

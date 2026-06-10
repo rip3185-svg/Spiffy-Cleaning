@@ -42,36 +42,37 @@ export default function PayRatesPage() {
 
   return (
     <div className="pb-24 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#0D1B4E] mb-4">Pay Rate Reference</h1>
-      
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6 text-blue-800 text-sm flex gap-2">
-        <div className="font-bold shrink-0 mt-0.5">ℹ️</div>
-        <div>These rates are set by Dexter. Contact your manager for questions or rate adjustments.</div>
+      <h1 className="text-2xl font-bold text-white mb-1">Pay Rate Reference</h1>
+      <p className="text-white/50 text-sm mb-4">Rates set by Dexter — contact your manager for questions</p>
+
+      <div className="rounded-xl p-3 mb-6 text-sm flex gap-2 border" style={{ background: 'rgba(29,200,255,0.08)', borderColor: 'rgba(29,200,255,0.2)', color: 'rgba(29,200,255,0.9)' }}>
+        <div className="font-bold shrink-0">ℹ</div>
+        <div>These rates are fixed. Team size affects per-job pay — bigger teams earn less per job but move faster.</div>
       </div>
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-xl font-bold text-[#1A1A2A] mb-4">Standard Cleaning</h2>
+          <h2 className="text-base font-bold text-white/70 uppercase tracking-widest mb-4">Standard Cleaning</h2>
           {renderTable("Unit Cleaning (Units)", PAY_RATES['units'])}
           {renderTable("Building Cleaning", PAY_RATES['building'])}
           {renderTable("Small Hallway", PAY_RATES['hallway'])}
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-[#1A1A2A] mb-4">Clubhouse Cleaning</h2>
+          <h2 className="text-base font-bold text-white/70 uppercase tracking-widest mb-4">Clubhouse Cleaning</h2>
           {renderTable("Clubhouse - Tier $150", CLUBHOUSE_RATES['150'])}
           {renderTable("Clubhouse - Tier $120", CLUBHOUSE_RATES['120'])}
           {renderTable("Clubhouse - Tier $80", CLUBHOUSE_RATES['80'])}
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-[#1A1A2A] mb-4">Clubhouse / Hallway Combos</h2>
+          <h2 className="text-base font-bold text-white/70 uppercase tracking-widest mb-4">Clubhouse / Hallway Combos</h2>
           {renderTable("Club/Hallway - Tier $725", CLUB_HALLWAY_RATES['725'])}
           {renderTable("Club/Hallway - Tier $500", CLUB_HALLWAY_RATES['500'])}
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-[#1A1A2A] mb-4">Other Services</h2>
+          <h2 className="text-base font-bold text-white/70 uppercase tracking-widest mb-4">Other Services</h2>
           {renderTable("LKQ", PAY_RATES['lkq'])}
           {renderTable("Touch-Up", PAY_RATES['touchup'])}
         </section>

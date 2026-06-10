@@ -21,7 +21,8 @@ export default function EmployeeHistoryPage() {
 
   return (
     <div className="pb-24">
-      <h1 className="text-2xl font-bold text-[#0D1B4E] mb-6">Pay History</h1>
+      <h1 className="text-2xl font-bold text-white mb-1">Pay History</h1>
+      <p className="text-white/50 text-sm mb-6">Your approved &amp; locked weeks</p>
       
       {summaries.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm p-8 text-center">

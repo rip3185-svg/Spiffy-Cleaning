@@ -61,13 +61,18 @@ export default function ManagerOverviewPage() {
 
   return (
     <div className="pb-24">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-white">Overview</h1>
+        <p className="text-white/50 text-sm mt-0.5">Week of Jun 2–8, 2026</p>
+      </div>
+
       {pendingJobs.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center justify-between">
-          <div className="flex items-center text-red-700 font-semibold gap-2">
+        <div className="bg-red-500/15 border border-red-400/30 rounded-xl p-4 mb-6 flex items-center justify-between">
+          <div className="flex items-center text-red-300 font-semibold gap-2">
             <AlertCircle size={20} />
             <span>{pendingJobs.length} job entries need your approval</span>
           </div>
-          <Link href={`/manager/employee/${pendingJobs[0].employeeId}`} className="text-red-600 font-medium underline text-sm">
+          <Link href={`/manager/employee/${pendingJobs[0].employeeId}`} className="text-red-300 font-medium underline text-sm">
             Review Now
           </Link>
         </div>

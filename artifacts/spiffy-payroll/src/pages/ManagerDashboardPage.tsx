@@ -55,8 +55,8 @@ export default function ManagerDashboardPage() {
   return (
     <div className="pb-24">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#0D1B4E]">Dashboard</h1>
-        <p className="text-gray-500">Week of Jun 2–8, 2026</p>
+        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+        <p className="text-white/50 text-sm mt-0.5">Week of Jun 2–8, 2026</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

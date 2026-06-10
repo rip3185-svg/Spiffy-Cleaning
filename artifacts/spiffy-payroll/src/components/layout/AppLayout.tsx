@@ -53,12 +53,12 @@ export function AppLayout({ children }: AppLayoutProps) {
   const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <div className="flex h-screen w-full overflow-hidden" style={{ background: 'linear-gradient(145deg, #eef2fb 0%, #e8eef8 40%, #edf4fb 100%)' }}>
+    <div className="flex h-screen w-full overflow-hidden" style={{ background: 'linear-gradient(160deg, #0a1640 0%, #0D1B4E 50%, #091538 100%)' }}>
 
       {/* ── Desktop Sidebar ── */}
       <aside
-        className="hidden lg:flex flex-col w-[230px] h-full flex-shrink-0"
-        style={{ background: 'linear-gradient(180deg, #0B1740 0%, #0D1B4E 60%, #0f2060 100%)' }}
+        className="hidden lg:flex flex-col w-[230px] h-full flex-shrink-0 border-r"
+        style={{ background: 'linear-gradient(180deg, #0a1640 0%, #0d1b4e 60%, #0a1640 100%)', borderColor: 'rgba(29,200,255,0.12)' }}
       >
         {/* Logo area */}
         <div className="px-5 pt-6 pb-4">
@@ -132,22 +132,22 @@ export function AppLayout({ children }: AppLayoutProps) {
         {/* Demo Banner */}
         {showDemoBanner && (
           <div
-            className="flex items-center justify-between px-4 py-2 shrink-0 text-sm font-semibold"
-            style={{ background: 'linear-gradient(90deg, #1DC8FF, #00c4f5)', color: '#0D1B4E' }}
+            className="flex items-center justify-between px-4 py-2 shrink-0 text-xs font-semibold border-b"
+            style={{ background: 'rgba(29,200,255,0.08)', color: '#1DC8FF', borderColor: 'rgba(29,200,255,0.18)' }}
           >
-            <span>Demo Mode — Week of Jun 2–8, 2026 · Real Spiffy team &amp; properties</span>
+            <span>✦ Demo Mode — Week of Jun 2–8, 2026 · Real Spiffy team &amp; properties</span>
             <button
               onClick={() => setShowDemoBanner(false)}
-              className="ml-3 p-1 rounded hover:bg-black/10 transition-colors shrink-0"
+              className="ml-3 p-1 rounded hover:bg-white/10 transition-colors shrink-0 text-white/40 hover:text-white"
             >
-              <X size={15} />
+              <X size={14} />
             </button>
           </div>
         )}
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto pb-[72px] lg:pb-0">
-          <div className="max-w-4xl mx-auto p-4 lg:p-8">
+          <div className="max-w-4xl mx-auto p-4 lg:p-6">
             {children}
           </div>
         </main>

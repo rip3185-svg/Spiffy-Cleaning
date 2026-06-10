@@ -74,77 +74,87 @@ export default function ManagerOverviewPage() {
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500">
-          <div className="text-gray-500 text-sm font-medium mb-1">Total Payroll</div>
+        <div className="stat-card bg-white rounded-2xl p-5 border-l-4 border-[#1DC8FF]" style={{ boxShadow: '0 4px 16px rgba(13,27,78,0.10)' }}>
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Total Payroll</div>
           <div className="text-2xl font-bold text-[#0D1B4E]">${totalPayroll.toFixed(2)}</div>
           <div className="text-xs text-gray-400 mt-1">{totalEmployeesWithJobs} employees this week</div>
         </div>
-        
-        <div className="bg-white rounded-xl shadow-sm p-4 border-l-4 border-yellow-500">
-          <div className="text-gray-500 text-sm font-medium mb-1">Needs Review</div>
+
+        <div className="stat-card bg-white rounded-2xl p-5 border-l-4 border-yellow-400" style={{ boxShadow: '0 4px 16px rgba(13,27,78,0.10)' }}>
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Needs Review</div>
           <div className="text-2xl font-bold text-[#0D1B4E]">{pendingJobs.length}</div>
-          <div className="text-xs text-yellow-600 mt-1 font-medium">Pending entries</div>
+          <div className="text-xs text-yellow-600 mt-1 font-semibold">{pendingJobs.length > 0 ? '⚠ Action required' : 'All clear'}</div>
         </div>
-        
+
         <Link href="/manager/collections">
-          <div className="bg-red-600 rounded-xl shadow-sm p-4 cursor-pointer hover:bg-red-700 transition-colors h-full flex flex-col justify-center">
-            <div className="text-white/80 text-sm font-medium mb-1">Collections</div>
+          <div className="stat-card rounded-2xl p-5 cursor-pointer h-full flex flex-col justify-center" style={{ background: 'linear-gradient(135deg, #DC2626, #b91c1c)', boxShadow: '0 4px 16px rgba(220,38,38,0.30)' }}>
+            <div className="text-xs font-semibold text-red-200 uppercase tracking-wide mb-2">Collections</div>
             <div className="text-2xl font-bold text-white">${totalPastDue.toLocaleString()}</div>
-            <div className="text-xs text-red-200 mt-1">{pastDueInvoices.length} past due invoices</div>
+            <div className="text-xs text-red-200 mt-1">{pastDueInvoices.length} past due invoices →</div>
           </div>
         </Link>
-        
-        <div className="bg-white rounded-xl shadow-sm p-4 border-l-4 border-green-500">
-          <div className="text-gray-500 text-sm font-medium mb-1">Approved</div>
-          <div className="text-2xl font-bold text-[#0D1B4E]">{fullyApprovedCount} <span className="text-lg text-gray-400 font-normal">/ {totalEmployeesWithJobs}</span></div>
-          <div className="text-xs text-gray-400 mt-1">Complete</div>
+
+        <div className="stat-card bg-white rounded-2xl p-5 border-l-4 border-green-500" style={{ boxShadow: '0 4px 16px rgba(13,27,78,0.10)' }}>
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Approved</div>
+          <div className="text-2xl font-bold text-[#0D1B4E]">{fullyApprovedCount}<span className="text-lg text-gray-400 font-normal"> / {totalEmployeesWithJobs}</span></div>
+          <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: totalEmployeesWithJobs > 0 ? `${(fullyApprovedCount/totalEmployeesWithJobs)*100}%` : '0%' }} />
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-6 bg-white p-3 rounded-lg shadow-sm">
-        <button className="p-2 hover:bg-gray-100 rounded-full text-gray-500"><ChevronLeft size={20} /></button>
-        <h2 className="font-semibold text-[#0D1B4E] text-lg">Week of Jun 2–8, 2026</h2>
-        <button className="p-2 hover:bg-gray-100 rounded-full text-gray-500"><ChevronRight size={20} /></button>
+      <div className="flex items-center justify-between mb-5 bg-white px-4 py-3 rounded-2xl" style={{ boxShadow: '0 4px 16px rgba(13,27,78,0.08)' }}>
+        <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-[#0D1B4E] transition-all"><ChevronLeft size={20} /></button>
+        <h2 className="font-bold text-[#0D1B4E]">Week of Jun 2–8, 2026</h2>
+        <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-[#0D1B4E] transition-all"><ChevronRight size={20} /></button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-        {employeeStats.map((emp, idx) => (
-          <div key={emp.id} className={`flex items-center p-4 border-b border-gray-100 last:border-0 ${emp.status === 'red' ? 'bg-red-50/30' : ''}`}>
-            <div className={`w-3 h-3 rounded-full mr-4 shrink-0 ${
-              emp.status === 'red' ? 'bg-red-500' : 
-              emp.status === 'green' ? 'bg-green-500' : 
-              emp.status === 'yellow' ? 'bg-yellow-500' : 'bg-gray-300'
-            }`} />
-            
-            <div className="flex-1 min-w-0">
-              <div className="font-semibold text-[#1A1A2A] truncate">{emp.name}</div>
-              <div className="text-sm text-gray-500 flex gap-2 items-center">
-                <span>{emp.jobCount} jobs</span>
-                {emp.pendingCount > 0 && (
-                  <span className="text-red-600 bg-red-100 px-2 py-0.5 rounded text-xs font-medium">
-                    {emp.pendingCount} pending
-                  </span>
-                )}
+      <div className="bg-white rounded-2xl overflow-hidden border border-gray-100" style={{ boxShadow: '0 4px 16px rgba(13,27,78,0.08)' }}>
+        {employeeStats.map((emp) => (
+          <Link key={emp.id} href={emp.jobCount > 0 ? `/manager/employee/${emp.id}` : '#'}>
+            <div className={`row-interactive flex items-center px-5 py-4 border-b border-gray-100 last:border-0 ${emp.status === 'red' ? 'bg-red-50/40' : ''}`}>
+              <div className={`w-2.5 h-2.5 rounded-full mr-4 shrink-0 ${
+                emp.status === 'red' ? 'bg-red-500 status-dot-pending' :
+                emp.status === 'green' ? 'bg-green-500' :
+                emp.status === 'yellow' ? 'bg-yellow-400' : 'bg-gray-300'
+              }`} />
+
+              <div className="w-9 h-9 rounded-full bg-[#0D1B4E]/8 flex items-center justify-center font-bold text-[#0D1B4E] text-sm mr-3 shrink-0">
+                {emp.name.charAt(0)}
               </div>
-            </div>
-            
-            <div className="text-right mx-4 hidden sm:block">
-              <div className="font-bold text-[#0D1B4E]">${emp.totalPay.toFixed(2)}</div>
-            </div>
-            
-            {emp.jobCount > 0 ? (
-              <Link href={`/manager/employee/${emp.id}`}>
-                <button className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                  emp.status === 'red' ? 'bg-red-100 text-red-700 hover:bg-red-200' :
-                  'bg-blue-50 text-blue-700 hover:bg-blue-100'
+
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-[#1A1A2A] truncate">{emp.name}</div>
+                <div className="text-xs text-gray-400 flex gap-2 items-center mt-0.5">
+                  <span>{emp.jobCount} jobs</span>
+                  {emp.pendingCount > 0 && (
+                    <span className="text-red-600 bg-red-100 px-1.5 py-0.5 rounded font-semibold">
+                      {emp.pendingCount} pending
+                    </span>
+                  )}
+                  {emp.status === 'green' && (
+                    <span className="text-green-600 bg-green-100 px-1.5 py-0.5 rounded font-semibold">Approved</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="text-right mx-4 hidden sm:block">
+                <div className="font-bold text-[#0D1B4E] text-base">${emp.totalPay.toFixed(2)}</div>
+              </div>
+
+              {emp.jobCount > 0 ? (
+                <div className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  emp.status === 'red'
+                    ? 'bg-red-500 text-white'
+                    : 'bg-[#0D1B4E]/8 text-[#0D1B4E]'
                 }`}>
-                  Review &rarr;
-                </button>
-              </Link>
-            ) : (
-              <div className="px-4 py-2 text-sm text-gray-400 italic">No entries yet</div>
-            )}
-          </div>
+                  Review →
+                </div>
+              ) : (
+                <div className="text-xs text-gray-300 italic">No entries</div>
+              )}
+            </div>
+          </Link>
         ))}
       </div>
     </div>

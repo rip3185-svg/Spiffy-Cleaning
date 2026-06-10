@@ -108,7 +108,6 @@ export default function LoginPage() {
               style={{ background: 'linear-gradient(135deg, #0D1B4E 0%, #1a3282 100%)' }}
               onMouseEnter={e => (e.currentTarget.style.background = 'linear-gradient(135deg, #1DC8FF 0%, #00aaee 100%)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'linear-gradient(135deg, #0D1B4E 0%, #1a3282 100%)')}
-              onMouseEnter2={undefined}
               data-testid="button-login"
             >
               Sign In

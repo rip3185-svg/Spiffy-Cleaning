@@ -3,7 +3,6 @@ import { Link, useLocation } from 'wouter';
 import { getSession, logout, isManager } from '@/utils/auth';
 import { BookOpen, CalendarDays, Home, BarChart3, DollarSign, Settings, LogOut, Menu, X, Building2 } from 'lucide-react';
 import logoPath from '@assets/spiffy_cleaning_logo_transparent.png';
-import { Button } from '@/components/ui/button';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -15,7 +14,6 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [showDemoBanner, setShowDemoBanner] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Auth guard
   if (!user) {
     setLocation('/login');
     return null;
@@ -29,107 +27,146 @@ export function AppLayout({ children }: AppLayoutProps) {
   };
 
   const navItems = manager ? [
-    { label: 'Overview', path: '/manager/overview', icon: <Home size={20} /> },
-    { label: 'Franchises', path: '/manager/franchises', icon: <Building2 size={20} /> },
-    { label: 'Dashboard', path: '/manager/dashboard', icon: <BarChart3 size={20} /> },
-    { label: 'Collections', path: '/manager/collections', icon: <DollarSign size={20} /> },
-    { label: 'Pay Rates', path: '/admin/pay-rates', icon: <Settings size={20} /> },
+    { label: 'Overview',    path: '/manager/overview',    icon: <Home size={18} /> },
+    { label: 'Franchises',  path: '/manager/franchises',  icon: <Building2 size={18} /> },
+    { label: 'Dashboard',   path: '/manager/dashboard',   icon: <BarChart3 size={18} /> },
+    { label: 'Collections', path: '/manager/collections', icon: <DollarSign size={18} /> },
+    { label: 'Pay Rates',   path: '/admin/pay-rates',     icon: <Settings size={18} /> },
   ] : [
-    { label: 'My Week', path: '/employee/week', icon: <BookOpen size={20} /> },
-    { label: 'History', path: '/employee/history', icon: <CalendarDays size={20} /> },
-    { label: 'Pay Rates', path: '/admin/pay-rates', icon: <Settings size={20} /> },
+    { label: 'My Week',  path: '/employee/week',    icon: <BookOpen size={18} /> },
+    { label: 'History',  path: '/employee/history', icon: <CalendarDays size={18} /> },
+    { label: 'Pay Rates',path: '/admin/pay-rates',  icon: <Settings size={18} /> },
   ];
 
-  // For bottom tabs (limit to 4)
   const mobileTabs = manager ? [
-    { label: 'Home', path: '/manager/overview', icon: <Home size={24} /> },
-    { label: 'Franchises', path: '/manager/franchises', icon: <Building2 size={24} /> },
-    { label: 'Team', path: '/manager/overview', icon: <BookOpen size={24} /> }, // route back to overview for team
-    { label: 'Stats', path: '/manager/dashboard', icon: <BarChart3 size={24} /> },
-    { label: 'Rates', path: '/admin/pay-rates', icon: <Settings size={24} /> },
+    { label: 'Home',       path: '/manager/overview',    icon: <Home size={22} /> },
+    { label: 'Franchises', path: '/manager/franchises',  icon: <Building2 size={22} /> },
+    { label: 'Stats',      path: '/manager/dashboard',   icon: <BarChart3 size={22} /> },
+    { label: 'Money',      path: '/manager/collections', icon: <DollarSign size={22} /> },
+    { label: 'Rates',      path: '/admin/pay-rates',     icon: <Settings size={22} /> },
   ] : [
-    { label: 'Home', path: '/employee/week', icon: <Home size={24} /> },
-    { label: 'My Week', path: '/employee/week', icon: <BookOpen size={24} /> },
-    { label: 'History', path: '/employee/history', icon: <CalendarDays size={24} /> },
+    { label: 'My Week',  path: '/employee/week',    icon: <BookOpen size={22} /> },
+    { label: 'History',  path: '/employee/history', icon: <CalendarDays size={22} /> },
+    { label: 'Pay Rates',path: '/admin/pay-rates',  icon: <Settings size={22} /> },
   ];
+
+  const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
   return (
-    <div className="flex h-screen w-full bg-[#F9FAFB] overflow-hidden">
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-[220px] h-full flex-shrink-0" style={{ background: 'linear-gradient(180deg, #0D1B4E 0%, #091540 100%)' }}>
-        <div className="p-6">
-          <img src={logoPath} alt="Spiffy Cleaning" className="h-16 w-auto mb-6" />
-          <div className="h-px bg-[#1DC8FF]/30 mb-4 w-full"/>
-          <nav className="space-y-2">
-            {navItems.map(item => {
-              const isActive = location === item.path || location.startsWith(`${item.path}/`);
-              return (
-                <Link key={item.path} href={item.path}>
-                  <div className={`flex items-center space-x-3 px-4 py-3 cursor-pointer transition-colors ${
-                    isActive 
-                      ? 'bg-[#1DC8FF]/15 text-[#1DC8FF] font-semibold rounded-lg border-l-[3px] border-[#1DC8FF]' 
-                      : 'rounded-r-md text-white/80 hover:text-white hover:bg-white/10'
-                  }`}>
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </div>
-                </Link>
-              );
-            })}
-          </nav>
+    <div className="flex h-screen w-full overflow-hidden" style={{ background: '#F0F2F8' }}>
+
+      {/* ── Desktop Sidebar ── */}
+      <aside
+        className="hidden lg:flex flex-col w-[230px] h-full flex-shrink-0"
+        style={{ background: 'linear-gradient(180deg, #0B1740 0%, #0D1B4E 60%, #0f2060 100%)' }}
+      >
+        {/* Logo area */}
+        <div className="px-5 pt-6 pb-4">
+          <div className="flex items-center justify-center bg-white/5 rounded-2xl px-3 py-4 mb-4 border border-white/10">
+            <img src={logoPath} alt="Spiffy Cleaning" className="h-20 w-auto drop-shadow-lg" />
+          </div>
+          <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent, rgba(29,200,255,0.5), transparent)' }} />
         </div>
-        
-        <div className="mt-auto p-4 border-t border-white/10">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col text-white">
-              <span className="font-medium truncate max-w-[120px]">{user.name}</span>
-              <span className="text-xs text-[#1DC8FF]">{manager ? 'Manager' : 'Employee'}</span>
+
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+          {navItems.map(item => {
+            const isActive = location === item.path || location.startsWith(`${item.path}/`);
+            return (
+              <Link key={item.path} href={item.path}>
+                <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-150 ${
+                  isActive
+                    ? 'bg-[#1DC8FF]/20 text-[#1DC8FF] font-semibold border border-[#1DC8FF]/30'
+                    : 'text-white/65 hover:text-white hover:bg-white/8 border border-transparent'
+                }`}>
+                  <span className={isActive ? 'text-[#1DC8FF]' : 'text-white/50'}>{item.icon}</span>
+                  <span className="text-sm">{item.label}</span>
+                  {isActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#1DC8FF]" />}
+                </div>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* User footer */}
+        <div className="p-4 border-t border-white/10 bg-black/20">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-[#0D1B4E] shrink-0"
+              style={{ background: 'linear-gradient(135deg, #1DC8FF, #00aaee)' }}
+            >
+              {initials}
             </div>
-            <button onClick={handleLogout} className="p-2 text-white/70 hover:text-white rounded-full hover:bg-white/10 transition-colors" title="Log Out">
-              <LogOut size={18} />
+            <div className="flex-1 min-w-0">
+              <div className="text-white font-medium text-sm truncate">{user.name.split(' ')[0]}</div>
+              <div className="text-[#1DC8FF]/80 text-xs">{manager ? 'Owner / Manager' : 'Team Member'}</div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="p-2 text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+              title="Log Out"
+            >
+              <LogOut size={16} />
             </button>
           </div>
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+      {/* ── Main Content ── */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden">
+
         {/* Mobile Header */}
-        <header className="lg:hidden bg-[#0D1B4E] text-white h-16 flex items-center justify-between px-4 z-10">
-          <img src={logoPath} alt="Spiffy" className="h-10 w-auto" />
-          <button onClick={() => setMobileMenuOpen(true)} className="p-2 -mr-2">
-            <Menu size={24} />
+        <header
+          className="lg:hidden h-14 flex items-center justify-between px-4 shrink-0"
+          style={{ background: 'linear-gradient(90deg, #0D1B4E, #1a3282)' }}
+        >
+          <img src={logoPath} alt="Spiffy" className="h-9 w-auto" />
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+          >
+            <Menu size={22} />
           </button>
         </header>
 
         {/* Demo Banner */}
         {showDemoBanner && (
-          <div className="bg-[#1DC8FF] text-[#0D1B4E] font-semibold text-sm px-4 py-2 flex justify-between items-center z-10 shrink-0">
-            <span>Demo Mode — Showing week of Jun 2–8, 2026 with real Spiffy team and properties</span>
-            <button onClick={() => setShowDemoBanner(false)} className="p-1 hover:bg-black/10 rounded">
-              <X size={16} />
+          <div
+            className="flex items-center justify-between px-4 py-2 shrink-0 text-sm font-semibold"
+            style={{ background: 'linear-gradient(90deg, #1DC8FF, #00c4f5)', color: '#0D1B4E' }}
+          >
+            <span>Demo Mode — Week of Jun 2–8, 2026 · Real Spiffy team &amp; properties</span>
+            <button
+              onClick={() => setShowDemoBanner(false)}
+              className="ml-3 p-1 rounded hover:bg-black/10 transition-colors shrink-0"
+            >
+              <X size={15} />
             </button>
           </div>
         )}
 
-        {/* Scrollable Content */}
-        <main className="flex-1 overflow-y-auto pb-[70px] lg:pb-0">
+        {/* Page content */}
+        <main className="flex-1 overflow-y-auto pb-[72px] lg:pb-0">
           <div className="max-w-4xl mx-auto p-4 lg:p-8">
             {children}
           </div>
         </main>
 
         {/* Mobile Bottom Tabs */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 h-[64px] bg-[#0D1B4E] flex items-center justify-around px-2 z-20 pb-safe">
+        <div
+          className="lg:hidden fixed bottom-0 left-0 right-0 h-[64px] flex items-center z-20"
+          style={{ background: 'linear-gradient(180deg, #0D1B4E, #091540)', borderTop: '1px solid rgba(29,200,255,0.15)' }}
+        >
           {mobileTabs.map((tab, i) => {
             const isActive = location === tab.path || location.startsWith(`${tab.path}/`);
             return (
-              <Link key={i} href={tab.path}>
-                <div className={`flex flex-col items-center justify-center w-16 h-full space-y-1 cursor-pointer ${
-                  isActive ? 'text-[#1DC8FF]' : 'text-white/60'
+              <Link key={i} href={tab.path} className="flex-1">
+                <div className={`flex flex-col items-center justify-center h-full py-2 gap-1 transition-all ${
+                  isActive ? 'text-[#1DC8FF]' : 'text-white/40 hover:text-white/70'
                 }`}>
                   {tab.icon}
-                  <span className="text-[10px] font-medium">{tab.label}</span>
+                  <span className="text-[9px] font-semibold tracking-wide uppercase">{tab.label}</span>
+                  {isActive && <div className="absolute bottom-0 w-8 h-0.5 rounded-full bg-[#1DC8FF]" />}
                 </div>
               </Link>
             );
@@ -137,51 +174,64 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
+      {/* ── Mobile Slide-out Menu ── */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setMobileMenuOpen(false)} />
-          <div className="relative w-[280px] bg-[#0D1B4E] h-full flex flex-col shadow-2xl animate-in slide-in-from-left">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+          <div
+            className="relative w-[280px] h-full flex flex-col shadow-2xl"
+            style={{ background: 'linear-gradient(180deg, #0B1740 0%, #0D1B4E 100%)' }}
+          >
             <div className="p-4 flex items-center justify-between border-b border-white/10">
               <img src={logoPath} alt="Spiffy Cleaning" className="h-10 w-auto" />
-              <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-white">
-                <X size={24} />
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+              >
+                <X size={20} />
               </button>
             </div>
-            
-            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+
+            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
               {navItems.map(item => {
                 const isActive = location === item.path || location.startsWith(`${item.path}/`);
                 return (
                   <Link key={item.path} href={item.path}>
-                    <div 
-                      className={`flex items-center space-x-3 px-4 py-3 rounded-md cursor-pointer ${
-                        isActive ? 'bg-white/10 text-[#1DC8FF]' : 'text-white'
+                    <div
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all ${
+                        isActive
+                          ? 'bg-[#1DC8FF]/15 text-[#1DC8FF] border border-[#1DC8FF]/25'
+                          : 'text-white/70 hover:text-white hover:bg-white/8 border border-transparent'
                       }`}
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {item.icon}
-                      <span className="font-medium">{item.label}</span>
+                      <span className="font-medium text-sm">{item.label}</span>
                     </div>
                   </Link>
                 );
               })}
             </nav>
-            
-            <div className="p-4 border-t border-white/10 bg-black/10">
-              <div className="flex items-center justify-between text-white mb-4">
+
+            <div className="p-4 border-t border-white/10 bg-black/20">
+              <div className="flex items-center gap-3 mb-4">
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-[#0D1B4E]"
+                  style={{ background: 'linear-gradient(135deg, #1DC8FF, #00aaee)' }}
+                >
+                  {initials}
+                </div>
                 <div>
-                  <div className="font-medium">{user.name}</div>
-                  <div className="text-xs text-[#1DC8FF]">{manager ? 'Manager' : 'Employee'}</div>
+                  <div className="text-white font-semibold text-sm">{user.name}</div>
+                  <div className="text-[#1DC8FF]/80 text-xs">{manager ? 'Owner / Manager' : 'Team Member'}</div>
                 </div>
               </div>
-              <Button 
-                variant="outline" 
-                onClick={handleLogout} 
-                className="w-full border-white/30 text-white hover:bg-white/10"
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-white/70 hover:text-white border border-white/20 hover:bg-white/10 transition-all text-sm font-medium"
               >
-                <LogOut size={16} className="mr-2" /> Log Out
-              </Button>
+                <LogOut size={15} /> Log Out
+              </button>
             </div>
           </div>
         </div>

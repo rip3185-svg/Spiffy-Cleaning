@@ -115,33 +115,104 @@
   --app-font-mono: Menlo, monospace;
   --radius: .5rem;
   
-  --shadow-2xs: 0px 2px 0px 0px rgba(0,0,0,0.02);
-  --shadow-xs: 0px 2px 0px 0px rgba(0,0,0,0.04);
-  --shadow-sm: 0px 2px 0px 0px rgba(0,0,0,0.04), 0px 1px 2px -1px rgba(0,0,0,0.02);
-  --shadow: 0px 2px 0px 0px rgba(0,0,0,0.04), 0px 1px 2px -1px rgba(0,0,0,0.02);
-  --shadow-md: 0px 2px 0px 0px rgba(0,0,0,0.04), 0px 2px 4px -1px rgba(0,0,0,0.02);
-  --shadow-lg: 0px 2px 0px 0px rgba(0,0,0,0.04), 0px 4px 6px -1px rgba(0,0,0,0.02);
-  --shadow-xl: 0px 2px 0px 0px rgba(0,0,0,0.04), 0px 8px 10px -1px rgba(0,0,0,0.02);
-  --shadow-2xl: 0px 2px 0px 0px rgba(0,0,0,0.04);
+  --shadow-2xs: 0px 1px 2px rgba(13,27,78,0.06);
+  --shadow-xs: 0px 1px 3px rgba(13,27,78,0.08), 0px 1px 2px rgba(13,27,78,0.06);
+  --shadow-sm: 0px 2px 6px rgba(13,27,78,0.10), 0px 1px 2px rgba(13,27,78,0.08);
+  --shadow: 0px 3px 8px rgba(13,27,78,0.12), 0px 1px 3px rgba(13,27,78,0.08);
+  --shadow-md: 0px 4px 12px rgba(13,27,78,0.14), 0px 2px 4px rgba(13,27,78,0.08);
+  --shadow-lg: 0px 8px 20px rgba(13,27,78,0.16), 0px 3px 6px rgba(13,27,78,0.08);
+  --shadow-xl: 0px 16px 32px rgba(13,27,78,0.20), 0px 4px 8px rgba(13,27,78,0.10);
+  --shadow-2xl: 0px 24px 48px rgba(13,27,78,0.25), 0px 8px 16px rgba(13,27,78,0.12);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
 
 .card-elevated {
-  box-shadow: 0 2px 8px rgba(13,27,78,0.08), 0 0 1px rgba(13,27,78,0.06);
+  box-shadow: 0 4px 16px rgba(13,27,78,0.12), 0 1px 3px rgba(13,27,78,0.08);
 }
 .card-hover {
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .card-hover:hover {
-  box-shadow: 0 8px 24px rgba(13,27,78,0.12), 0 0 1px rgba(13,27,78,0.08);
-  transform: translateY(-1px);
+  box-shadow: 0 12px 32px rgba(13,27,78,0.18), 0 2px 6px rgba(13,27,78,0.10);
+  transform: translateY(-2px);
 }
 .spiffy-gradient-text {
   background: linear-gradient(135deg, #0D1B4E 0%, #1DC8FF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Punchy interactive buttons */
+.btn-spiffy {
+  background: linear-gradient(135deg, #0D1B4E 0%, #1a3282 100%);
+  color: white;
+  border: none;
+  transition: all 0.15s ease;
+}
+.btn-spiffy:hover {
+  background: linear-gradient(135deg, #1DC8FF 0%, #00aaee 100%);
+  color: #0D1B4E;
+  box-shadow: 0 6px 20px rgba(29,200,255,0.35);
+  transform: translateY(-1px);
+}
+.btn-spiffy:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
+}
+
+/* Approve/action button pulse */
+@keyframes spiffy-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(29,200,255,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(29,200,255,0); }
+}
+.btn-pulse {
+  animation: spiffy-pulse 2s ease-in-out infinite;
+}
+
+/* Stat card shine on hover */
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+}
+.stat-card:hover::before {
+  left: 130%;
+}
+.stat-card:hover {
+  box-shadow: 0 10px 28px rgba(13,27,78,0.16);
+  transform: translateY(-2px);
+}
+
+/* Row hover highlight */
+.row-interactive {
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+  cursor: pointer;
+}
+.row-interactive:hover {
+  background: rgba(29,200,255,0.04);
+  box-shadow: inset 3px 0 0 #1DC8FF;
+}
+
+/* Status dot pulse for pending */
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+.status-dot-pending {
+  animation: dot-pulse 1.8s ease-in-out infinite;
 }
 
 .dark {

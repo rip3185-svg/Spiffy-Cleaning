@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getSession } from '@/utils/auth';
 import { DEMO_WEEK } from '@/data/demoWeek';
 import { getJobsForEmployee, addJob, updateJob, deleteJob, generateId } from '@/utils/storage';
@@ -6,12 +6,16 @@ import { calculatePay } from '@/utils/payCalc';
 import { JOB_TYPE_OPTIONS, FLAT_RATE_TYPES, WEEKLY_DRIVE_PAY } from '@/data/payRates';
 import { PropertySearch } from '@/components/ui/PropertySearch';
 import { QuantityStepper } from '@/components/ui/QuantityStepper';
+import { PhotoUpload } from '@/components/ui/PhotoUpload';
 import { Button } from '@/components/ui/button';
-import { Trash2, CheckCircle, Clock, Car, ChevronRight } from 'lucide-react';
-import type { JobEntry } from '@/types';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Trash2, CheckCircle, Clock, Car, ChevronRight, FileDown } from 'lucide-react';
+import type { JobEntry, JobPhotos } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ALL_USERS } from '@/data/employees';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { exportWeeklyPayPDF } from '@/utils/pdfExport';
+import { toast } from 'sonner';
 import { useLang } from '@/i18n/LanguageContext';
 
 const DAYS_EN = [
@@ -38,8 +42,15 @@ export default function EmployeeWeekPage() {
   const [jobs, setJobs] = useState<JobEntry[]>([]);
   const [teamLeader, setTeamLeader] = useState<string>(user?.id || '');
   const [teamSize, setTeamSize] = useState<2 | 3 | 4>(3);
-  const { t, lang } = useLang();
 
+  // Duplicate-warning state
+  const [dupWarning, setDupWarning] = useState<{
+    jobId: string;
+    property: string;
+    dayOfWeek: number;
+  } | null>(null);
+
+  const { t, lang } = useLang();
   const DAYS = lang === 'es' ? DAYS_ES : DAYS_EN;
 
   useEffect(() => {
@@ -49,9 +60,9 @@ export default function EmployeeWeekPage() {
     }
   }, [user]);
 
-  const refreshJobs = () => {
+  const refreshJobs = useCallback(() => {
     if (user) setJobs(getJobsForEmployee(user.id, DEMO_WEEK));
-  };
+  }, [user]);
 
   const handleAddJob = (dayOfWeek: number) => {
     if (!user) return;
@@ -73,9 +84,29 @@ export default function EmployeeWeekPage() {
     refreshJobs();
   };
 
-  const handleUpdateJob = (id: string, updates: Partial<JobEntry>) => {
+  const handleUpdateJob = (id: string, updates: Partial<JobEntry>, force = false) => {
+    // Duplicate-property check
+    if (updates.property && !force) {
+      const job = jobs.find(j => j.id === id);
+      if (job) {
+        const sameDay = jobs.filter(j => j.id !== id && j.dayOfWeek === job.dayOfWeek);
+        const dupe = sameDay.find(j => j.property.trim().toLowerCase() === updates.property!.trim().toLowerCase());
+        if (dupe) {
+          setDupWarning({ jobId: id, property: updates.property, dayOfWeek: job.dayOfWeek });
+          return;
+        }
+      }
+    }
     updateJob(id, updates);
     refreshJobs();
+  };
+
+  const confirmDuplicate = () => {
+    if (!dupWarning) return;
+    const { jobId, property } = dupWarning;
+    updateJob(jobId, { property });
+    refreshJobs();
+    setDupWarning(null);
   };
 
   const handleDeleteJob = (id: string) => {
@@ -97,6 +128,12 @@ export default function EmployeeWeekPage() {
     refreshJobs();
   };
 
+  const handleDownloadPDF = () => {
+    if (!user) return;
+    toast.success(t.pdf.generating);
+    exportWeeklyPayPDF(user.name, t.week.weekOf, jobs, lang);
+  };
+
   if (!user) return null;
 
   const jobsByDay: Record<number, JobEntry[]> = {};
@@ -106,7 +143,7 @@ export default function EmployeeWeekPage() {
   });
 
   const approvedPay = jobs
-    .filter(j => j.status === 'approved')
+    .filter(j => j.status === 'approved' || j.status === 'locked')
     .reduce((sum, j) => sum + (calculatePay(j)?.myPay ?? 0), 0);
 
   const pendingPay = jobs
@@ -158,9 +195,7 @@ export default function EmployeeWeekPage() {
                   key={size}
                   onClick={() => handleTeamSizeChange(size)}
                   className={`flex-1 min-h-[44px] rounded-xl font-bold text-lg transition-all ${
-                    teamSize === size
-                      ? 'text-white shadow-md'
-                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                    teamSize === size ? 'text-white shadow-md' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                   }`}
                   style={teamSize === size ? { background: 'linear-gradient(135deg, #0D1B4E, #1a3282)', boxShadow: '0 4px 12px rgba(13,27,78,0.25)' } : {}}
                   data-testid={`btn-team-size-${size}`}
@@ -182,7 +217,6 @@ export default function EmployeeWeekPage() {
 
           return (
             <div key={dayIndex} className="rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(13,27,78,0.10)' }}>
-              {/* Day header */}
               <div
                 className="flex items-center justify-between px-4 py-3"
                 style={{ background: 'linear-gradient(90deg, #0D1B4E 0%, #162774 100%)' }}
@@ -193,9 +227,7 @@ export default function EmployeeWeekPage() {
                   <span className="text-white/60 text-xs">{name}</span>
                 </div>
                 {hasJobs && (
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-white/50 text-xs">{dayJobs.length} {dayJobs.length === 1 ? t.week.job : t.week.jobs}</span>
-                  </div>
+                  <span className="text-white/50 text-xs">{dayJobs.length} {dayJobs.length === 1 ? t.week.job : t.week.jobs}</span>
                 )}
               </div>
 
@@ -204,12 +236,11 @@ export default function EmployeeWeekPage() {
                   <JobCard
                     key={job.id}
                     job={job}
-                    onUpdate={updates => handleUpdateJob(job.id, updates)}
+                    onUpdate={(updates, force) => handleUpdateJob(job.id, updates, force)}
                     onDelete={() => handleDeleteJob(job.id)}
                   />
                 ))}
 
-                {/* Daily Total row */}
                 {hasJobs && (
                   <div className="flex items-center justify-between px-4 py-2.5 rounded-xl" style={{ background: 'linear-gradient(90deg, rgba(29,200,255,0.08), rgba(29,200,255,0.04))' }}>
                     <span className="text-xs font-bold text-[#0D1B4E]/60 uppercase tracking-wide">{t.week.dailyTotal}</span>
@@ -300,17 +331,38 @@ export default function EmployeeWeekPage() {
                   </p>
                 </div>
               )}
+
+              {/* PDF Download */}
+              <button
+                onClick={handleDownloadPDF}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm text-[#0D1B4E] border-2 border-[#0D1B4E]/20 hover:border-[#1DC8FF] hover:text-[#1DC8FF] transition-all mt-1"
+              >
+                <FileDown size={16} />
+                {t.pdf.downloadPay}
+              </button>
             </div>
           </SheetContent>
         </Sheet>
       </div>
+
+      {/* Duplicate property confirmation */}
+      <ConfirmDialog
+        open={!!dupWarning}
+        onOpenChange={(open) => !open && setDupWarning(null)}
+        title={t.duplicate.title}
+        description={dupWarning ? t.duplicate.message(dupWarning.property) : ''}
+        confirmLabel={t.duplicate.proceed}
+        cancelLabel={t.duplicate.cancel}
+        onConfirm={confirmDuplicate}
+        variant="primary"
+      />
     </div>
   );
 }
 
 function JobCard({ job, onUpdate, onDelete }: {
   job: JobEntry;
-  onUpdate: (updates: Partial<JobEntry>) => void;
+  onUpdate: (updates: Partial<JobEntry>, force?: boolean) => void;
   onDelete: () => void;
 }) {
   const { t, lang } = useLang();
@@ -321,11 +373,13 @@ function JobCard({ job, onUpdate, onDelete }: {
   const jobLabel = JOB_TYPE_OPTIONS.find(o => o.value === job.jobType)?.label ?? job.jobType;
   const isNewService = job.jobType === 'carpet_cleaning' || job.jobType === 'painting';
 
+  const handlePhotoChange = (photos: JobPhotos) => {
+    onUpdate({ photos }, true); // skip dupe check for photo updates
+  };
+
   return (
     <div className={`rounded-xl overflow-hidden border transition-all ${
-      isLocked
-        ? 'border-gray-100 bg-gray-50/60'
-        : 'border-gray-200 bg-white shadow-sm'
+      isLocked ? 'border-gray-100 bg-gray-50/60' : 'border-gray-200 bg-white shadow-sm'
     }`}>
       {isNewService && (
         <div className="px-4 py-1.5 text-xs font-bold text-white flex items-center gap-1.5" style={{ background: 'linear-gradient(90deg, #7c3aed, #9333ea)' }}>
@@ -340,7 +394,10 @@ function JobCard({ job, onUpdate, onDelete }: {
           {isLocked ? (
             <div className="font-semibold text-[#1A1A2A]">{job.property || t.week.notSet}</div>
           ) : (
-            <PropertySearch value={job.property} onChange={prop => onUpdate({ property: prop })} />
+            <PropertySearch
+              value={job.property}
+              onChange={prop => onUpdate({ property: prop })}
+            />
           )}
         </div>
 
@@ -350,7 +407,10 @@ function JobCard({ job, onUpdate, onDelete }: {
           {isLocked ? (
             <div className="font-semibold text-[#1A1A2A]">{jobLabel}</div>
           ) : (
-            <Select value={job.jobType} onValueChange={val => onUpdate({ jobType: val, tier: undefined, specialtyPay: undefined })}>
+            <Select
+              value={job.jobType}
+              onValueChange={val => onUpdate({ jobType: val, tier: undefined, specialtyPay: undefined }, true)}
+            >
               <SelectTrigger className="w-full min-h-[44px] bg-gray-50 rounded-xl border-gray-200">
                 <SelectValue placeholder={t.week.selectJobType} />
               </SelectTrigger>
@@ -380,7 +440,7 @@ function JobCard({ job, onUpdate, onDelete }: {
               {['150', '120', '80'].map(tier => (
                 <button
                   key={tier}
-                  onClick={() => onUpdate({ tier })}
+                  onClick={() => onUpdate({ tier }, true)}
                   className={`flex-1 min-h-[40px] rounded-xl font-semibold transition-all ${job.tier === tier ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   style={job.tier === tier ? { background: 'linear-gradient(135deg, #0D1B4E, #1a3282)' } : {}}
                 >
@@ -399,7 +459,7 @@ function JobCard({ job, onUpdate, onDelete }: {
               {['725', '500'].map(tier => (
                 <button
                   key={tier}
-                  onClick={() => onUpdate({ tier })}
+                  onClick={() => onUpdate({ tier }, true)}
                   className={`flex-1 min-h-[40px] rounded-xl font-semibold transition-all ${job.tier === tier ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   style={job.tier === tier ? { background: 'linear-gradient(135deg, #0D1B4E, #1a3282)' } : {}}
                 >
@@ -425,13 +485,12 @@ function JobCard({ job, onUpdate, onDelete }: {
                 className="w-full pl-7 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-lg font-semibold text-[#0D1B4E] focus:outline-none focus:ring-2 focus:ring-[#1DC8FF]/40"
                 placeholder="0.00"
                 value={job.specialtyPay ?? ''}
-                onChange={e => onUpdate({ specialtyPay: parseFloat(e.target.value) || 0 })}
+                onChange={e => onUpdate({ specialtyPay: parseFloat(e.target.value) || 0 }, true)}
               />
             </div>
           </div>
         )}
 
-        {/* Flat-rate display when locked */}
         {isFlatRate && isLocked && (
           <div>
             <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">{lang === 'es' ? 'Pago' : 'Pay'}</label>
@@ -447,7 +506,7 @@ function JobCard({ job, onUpdate, onDelete }: {
               {isLocked ? (
                 <div className="font-bold text-2xl text-[#0D1B4E]">{job.quantity}</div>
               ) : (
-                <QuantityStepper value={job.quantity} onChange={q => onUpdate({ quantity: q })} />
+                <QuantityStepper value={job.quantity} onChange={q => onUpdate({ quantity: q }, true)} />
               )}
             </div>
             {!isLocked && (
@@ -463,13 +522,24 @@ function JobCard({ job, onUpdate, onDelete }: {
         )}
 
         {isFlatRate && !isLocked && (
-          <button
-            onClick={onDelete}
-            className="flex items-center gap-1.5 text-gray-300 hover:text-red-500 text-xs font-medium transition-all"
-          >
+          <button onClick={onDelete} className="flex items-center gap-1.5 text-gray-300 hover:text-red-500 text-xs font-medium transition-all">
             <Trash2 size={14} /> {t.week.remove}
           </button>
         )}
+
+        {/* Before/After Photos */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+            {lang === 'es' ? 'Fotos de Trabajo' : 'Job Photos'}
+          </label>
+          <PhotoUpload
+            photos={job.photos}
+            onChange={handlePhotoChange}
+            disabled={isLocked}
+            labelBefore={t.photos.before}
+            labelAfter={t.photos.after}
+          />
+        </div>
 
         {/* Pay result */}
         {payResult && payResult.myPay > 0 && (

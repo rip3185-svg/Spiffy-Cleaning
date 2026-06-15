@@ -3,12 +3,16 @@ import { DEMO_WEEK } from '@/data/demoWeek';
 import { TEAM_MEMBERS } from '@/data/employees';
 import { getJobs } from '@/utils/storage';
 import { calculatePay } from '@/utils/payCalc';
+import { exportManagerPayrollPDF } from '@/utils/pdfExport';
+import { WEEKLY_DRIVE_PAY } from '@/data/payRates';
+import { FileDown } from 'lucide-react';
 import type { JobEntry } from '@/types';
 import { useLang } from '@/i18n/LanguageContext';
+import { toast } from 'sonner';
 
 export default function ManagerDashboardPage() {
   const [jobs, setJobs] = useState<JobEntry[]>([]);
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   useEffect(() => {
     setJobs(getJobs().filter(j => j.weekStart === DEMO_WEEK));
@@ -52,11 +56,34 @@ export default function ManagerDashboardPage() {
   const totalJobs = jobs.length;
   const unapprovedCount = jobs.filter(j => j.status === 'pending').length;
 
+  const handleExportPDF = () => {
+    toast.success(t.pdf.generating);
+    const rows = employeeData.map(e => ({
+      name: e.name,
+      jobs: e.jobCount,
+      pending: e.pendingCount,
+      jobsPay: e.totalPay,
+      drivePay: WEEKLY_DRIVE_PAY,
+      total: e.totalPay + WEEKLY_DRIVE_PAY,
+    }));
+    exportManagerPayrollPDF(t.dashboard.weekOf, rows, lang as 'en' | 'es');
+  };
+
   return (
     <div className="pb-24">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">{t.dashboard.title}</h1>
-        <p className="text-white/50 text-sm mt-0.5">{t.dashboard.weekOf}</p>
+      <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold text-white">{t.dashboard.title}</h1>
+          <p className="text-white/50 text-sm mt-0.5">{t.dashboard.weekOf}</p>
+        </div>
+        <button
+          onClick={handleExportPDF}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm text-[#0D1B4E] transition-all"
+          style={{ background: 'linear-gradient(135deg, #1DC8FF, #00b8f0)', boxShadow: '0 4px 12px rgba(29,200,255,0.3)' }}
+        >
+          <FileDown size={16} />
+          {t.pdf.downloadPayroll}
+        </button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

@@ -10,6 +10,11 @@ export interface User {
 
 export type JobStatus = 'pending' | 'approved' | 'locked';
 
+export interface JobPhotos {
+  before?: string; // base64 data URL
+  after?: string;  // base64 data URL
+}
+
 export interface JobEntry {
   id: string;
   employeeId: string;
@@ -24,6 +29,7 @@ export interface JobEntry {
   isLeader: boolean;
   status: JobStatus;
   specialtyPay?: number;
+  photos?: JobPhotos;
   createdAt: string;
 }
 

@@ -277,6 +277,29 @@ export const translations = {
       fullReport:    'View Full Report',
     },
 
+    // Photos
+    photos: {
+      before:       'Before',
+      after:        'After',
+      tapToAdd:     'Tap to add',
+      noPhoto:      'No photo',
+    },
+
+    // PDF
+    pdf: {
+      downloadPay:     'Download Pay PDF',
+      downloadPayroll: 'Export Payroll PDF',
+      generating:      'Generating…',
+    },
+
+    // Duplicate warning
+    duplicate: {
+      title:   'Same Property Already Added',
+      message: (prop: string) => `"${prop}" already appears on this day. Are you sure you want to add it again?`,
+      proceed: 'Add Anyway',
+      cancel:  'Cancel',
+    },
+
     // Common
     common: {
       notFound:     'Employee not found',
@@ -548,6 +571,26 @@ export const translations = {
       topClients:    'Principales Clientes',
       contactOwner:  'Contactar Dueño',
       fullReport:    'Ver Informe Completo',
+    },
+
+    photos: {
+      before:       'Antes',
+      after:        'Después',
+      tapToAdd:     'Toca para agregar',
+      noPhoto:      'Sin foto',
+    },
+
+    pdf: {
+      downloadPay:     'Descargar PDF de Pago',
+      downloadPayroll: 'Exportar Nómina PDF',
+      generating:      'Generando…',
+    },
+
+    duplicate: {
+      title:   'Propiedad Ya Agregada',
+      message: (prop: string) => `"${prop}" ya aparece en este día. ¿Deseas agregarla de nuevo?`,
+      proceed: 'Agregar de Todos Modos',
+      cancel:  'Cancelar',
     },
 
     common: {

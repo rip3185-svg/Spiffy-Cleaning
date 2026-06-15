@@ -1,0 +1,8 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="400" height="220" viewBox="0 0 400 220">
+  <rect width="400" height="220" rx="40" fill="#0D1B4E"/>
+  <circle cx="140" cy="110" r="58" fill="#1DC8FF"/>
+  <circle cx="260" cy="110" r="58" fill="#ffffff" fill-opacity="0.92"/>
+  <path d="M100 110h80" stroke="#0D1B4E" stroke-width="12" stroke-linecap="round"/>
+  <path d="M220 110h80" stroke="#1DC8FF" stroke-width="12" stroke-linecap="round"/>
+  <text x="200" y="190" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700" fill="#ffffff">SPIFFY</text>
+</svg>

@@ -6,3 +6,9 @@ id = "gMVyEIC2uBB3x-kLrSawK"
 uri = "file://spiffy-payroll-code.tar.gz"
 type = "unspecified"
 title = "spiffy-payroll-code.tar.gz — full source (80KB)"
+
+[[outputs]]
+id = "vVoVxt7REGIahiQYqNAOA"
+uri = "file://spiffy-payroll-code.zip"
+type = "unspecified"
+title = "spiffy-payroll-code.zip — 94 files, 386KB"

@@ -5,6 +5,7 @@ import { ALL_USERS, TEAM_MEMBERS } from '@/data/employees';
 import logoPath from '@assets/spiffy_cleaning_logo_transparent.png';
 import { Input } from '@/components/ui/input';
 import { Eye, EyeOff, ChevronRight } from 'lucide-react';
+import { useLang } from '@/i18n/LanguageContext';
 
 export default function LoginPage() {
   const [, setLocation] = useLocation();
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const { t } = useLang();
 
   const handleLogin = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -24,7 +26,7 @@ export default function LoginPage() {
         setLocation('/employee/week');
       }
     } else {
-      setError("Hmm, that email or password doesn't look right.");
+      setError(t.login.errorMsg);
     }
   };
 
@@ -64,7 +66,7 @@ export default function LoginPage() {
             style={{ filter: 'drop-shadow(0 4px 16px rgba(29,200,255,0.3)) brightness(1.05)' }}
           />
           <div className="h-px w-24 mb-3" style={{ background: 'linear-gradient(90deg, transparent, #1DC8FF, transparent)' }} />
-          <span className="text-white/70 text-sm font-medium tracking-widest uppercase">Payroll Tracker</span>
+          <span className="text-white/70 text-sm font-medium tracking-widest uppercase">{t.login.subtitle}</span>
         </div>
 
         {/* White form section */}
@@ -72,7 +74,7 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-3">
             <Input
               type="email"
-              placeholder="Email address"
+              placeholder={t.login.emailPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="h-12 text-base bg-gray-50 border-gray-200 focus:border-[#1DC8FF] focus:ring-[#1DC8FF]/20 rounded-xl"
@@ -81,7 +83,7 @@ export default function LoginPage() {
             <div className="relative">
               <Input
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Password"
+                placeholder={t.login.passwordPlaceholder}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="h-12 text-base bg-gray-50 border-gray-200 focus:border-[#1DC8FF] focus:ring-[#1DC8FF]/20 rounded-xl pr-12"
@@ -110,7 +112,7 @@ export default function LoginPage() {
               onMouseLeave={e => (e.currentTarget.style.background = 'linear-gradient(135deg, #0D1B4E 0%, #1a3282 100%)')}
               data-testid="button-login"
             >
-              Sign In
+              {t.login.signIn}
             </button>
           </form>
         </div>
@@ -120,7 +122,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-px flex-1 bg-white/20" />
-          <span className="text-white/80 font-semibold text-sm tracking-wide uppercase">Quick Access</span>
+          <span className="text-white/80 font-semibold text-sm tracking-wide uppercase">{t.login.quickAccess}</span>
           <div className="h-px flex-1 bg-white/20" />
         </div>
 
@@ -138,7 +140,7 @@ export default function LoginPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-[#0D1B4E] text-base leading-tight">{dexter.name}</div>
-                <div className="text-[#0D1B4E]/70 text-xs font-medium">Owner · All access</div>
+                <div className="text-[#0D1B4E]/70 text-xs font-medium">{t.login.ownerAllAccess}</div>
               </div>
               <ChevronRight size={20} className="text-[#0D1B4E]/60 group-hover:translate-x-1 transition-transform" />
             </div>
@@ -160,7 +162,7 @@ export default function LoginPage() {
                   {emp.name.charAt(0)}
                 </div>
                 <div className="font-semibold text-[#0D1B4E] text-sm leading-tight truncate">{emp.name.split(' ')[0]}</div>
-                <div className="text-gray-400 text-xs mt-0.5">Team Member</div>
+                <div className="text-gray-400 text-xs mt-0.5">{t.login.teamMemberLabel}</div>
               </div>
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1DC8FF] scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
             </button>
@@ -168,7 +170,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-white/40 text-xs text-center mt-6">
-          Demo Mode — Data saved in your browser
+          {t.login.demoNotice}
         </p>
       </div>
     </div>

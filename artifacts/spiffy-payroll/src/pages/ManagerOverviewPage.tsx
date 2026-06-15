@@ -13,9 +13,15 @@ import {
   DollarSign, Users, Building2, BarChart3,
   ChevronRight, MapPin, Car, Zap
 } from 'lucide-react';
+import { useLang } from '@/i18n/LanguageContext';
 
-function getGreeting() {
+function getGreeting(lang: 'en' | 'es') {
   const h = new Date().getHours();
+  if (lang === 'es') {
+    if (h < 12) return 'Buenos días';
+    if (h < 17) return 'Buenas tardes';
+    return 'Buenas noches';
+  }
   if (h < 12) return 'Good morning';
   if (h < 17) return 'Good afternoon';
   return 'Good evening';
@@ -23,6 +29,7 @@ function getGreeting() {
 
 export default function ManagerOverviewPage() {
   const [jobs, setJobs] = useState<JobEntry[]>([]);
+  const { t, lang } = useLang();
 
   useEffect(() => {
     setJobs(getJobs().filter(j => j.weekStart === DEMO_WEEK));
@@ -66,6 +73,13 @@ export default function ManagerOverviewPage() {
 
   const employeesNeedingApproval = employeeStats.filter(e => e.pendingCount > 0);
 
+  const quickItems = [
+    { label: t.nav.franchises,   sub: t.managerOverview.franSub(FRANCHISES.length),       icon: <Building2 size={20} />,  href: '/manager/franchises',  color: 'from-violet-600 to-purple-700' },
+    { label: t.nav.dashboard,    sub: t.managerOverview.analyticsSub,                      icon: <BarChart3 size={20} />,  href: '/manager/dashboard',   color: 'from-[#0D1B4E] to-[#1a3282]' },
+    { label: t.nav.collections,  sub: `$${totalPastDue.toLocaleString()}`,                 icon: <DollarSign size={20} />, href: '/manager/collections', color: 'from-red-600 to-rose-700' },
+    { label: t.nav.payRates,     sub: t.managerOverview.payRatesSub,                       icon: <TrendingUp size={20} />, href: '/admin/pay-rates',     color: 'from-emerald-600 to-green-700' },
+  ];
+
   return (
     <div className="pb-28 space-y-6">
 
@@ -76,19 +90,19 @@ export default function ManagerOverviewPage() {
       >
         <div className="px-6 py-5 flex items-start justify-between gap-4">
           <div>
-            <p className="text-[#1DC8FF] text-sm font-semibold mb-1">{getGreeting()}</p>
+            <p className="text-[#1DC8FF] text-sm font-semibold mb-1">{getGreeting(lang)}</p>
             <h1 className="text-3xl font-bold text-white leading-tight">Dexter Thomas</h1>
-            <p className="text-white/50 text-sm mt-1">Spiffy Cleaning Company · Owner &amp; Founder</p>
+            <p className="text-white/50 text-sm mt-1">{t.managerOverview.subtitle}</p>
             <div className="flex items-center gap-3 mt-3 flex-wrap">
-              <span className="text-xs text-white/40 bg-white/8 px-2.5 py-1 rounded-full border border-white/10">📅 Jun 2–8, 2026</span>
-              <span className="text-xs text-white/40 bg-white/8 px-2.5 py-1 rounded-full border border-white/10">🏢 {activeLocations} Active Locations</span>
-              <span className="text-xs text-white/40 bg-white/8 px-2.5 py-1 rounded-full border border-white/10">👥 {TEAM_MEMBERS.length} Team Leaders</span>
+              <span className="text-xs text-white/40 bg-white/8 px-2.5 py-1 rounded-full border border-white/10">{t.managerOverview.weekLabel}</span>
+              <span className="text-xs text-white/40 bg-white/8 px-2.5 py-1 rounded-full border border-white/10">🏢 {activeLocations} {t.managerOverview.activeLocations}</span>
+              <span className="text-xs text-white/40 bg-white/8 px-2.5 py-1 rounded-full border border-white/10">👥 {TEAM_MEMBERS.length} {t.managerOverview.teamLeaders}</span>
             </div>
           </div>
           <div className="text-right shrink-0 hidden sm:block">
-            <div className="text-white/40 text-xs mb-0.5">This Week's Payroll</div>
+            <div className="text-white/40 text-xs mb-0.5">{t.managerOverview.thisWeekPayroll}</div>
             <div className="text-[#1DC8FF] font-bold text-3xl">${grandPayroll.toFixed(0)}</div>
-            <div className="text-white/30 text-xs mt-0.5">incl. ${totalDrivePay} drive pay</div>
+            <div className="text-white/30 text-xs mt-0.5">{t.managerOverview.inclDrivePay.replace('{{n}}', String(totalDrivePay))}</div>
           </div>
         </div>
 
@@ -96,19 +110,19 @@ export default function ManagerOverviewPage() {
         <div className="px-6 py-3 border-t flex items-center gap-4 flex-wrap" style={{ borderColor: 'rgba(29,200,255,0.12)', background: 'rgba(0,0,0,0.15)' }}>
           <div className="flex items-center gap-2 text-xs text-white/50">
             <CheckCircle2 size={13} className="text-green-400" />
-            <span><span className="text-green-400 font-semibold">{approvedJobs.length}</span> approved</span>
+            <span><span className="text-green-400 font-semibold">{approvedJobs.length}</span> {t.managerOverview.approvedCount}</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-white/50">
             <Clock size={13} className="text-amber-400" />
-            <span><span className="text-amber-400 font-semibold">{pendingJobs.length}</span> pending</span>
+            <span><span className="text-amber-400 font-semibold">{pendingJobs.length}</span> {t.managerOverview.pendingCount}</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-white/50">
             <MapPin size={13} className="text-[#1DC8FF]" />
-            <span><span className="text-[#1DC8FF] font-semibold">{uniqueProperties}</span> properties this week</span>
+            <span><span className="text-[#1DC8FF] font-semibold">{uniqueProperties}</span> {t.managerOverview.propertiesWeek}</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-white/50">
             <Zap size={13} className="text-purple-400" />
-            <span><span className="text-purple-400 font-semibold">{totalJobs}</span> total jobs</span>
+            <span><span className="text-purple-400 font-semibold">{totalJobs}</span> {t.managerOverview.totalJobs}</span>
           </div>
         </div>
       </div>
@@ -116,29 +130,29 @@ export default function ManagerOverviewPage() {
       {/* ── KPI CARDS ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="stat-card bg-white rounded-2xl p-4 border-l-4 border-[#1DC8FF]" style={{ boxShadow: '0 4px 20px rgba(13,27,78,0.20)' }}>
-          <div className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Total Payroll</div>
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">{t.managerOverview.totalPayroll}</div>
           <div className="text-2xl font-bold text-[#0D1B4E]">${grandPayroll.toFixed(0)}</div>
-          <div className="text-xs text-gray-400 mt-1">{totalEmployeesWithJobs} of {TEAM_MEMBERS.length} submitted</div>
+          <div className="text-xs text-gray-400 mt-1">{totalEmployeesWithJobs} {t.managerOverview.of} {TEAM_MEMBERS.length} {t.managerOverview.submitted}</div>
         </div>
 
         <div className="stat-card bg-white rounded-2xl p-4 border-l-4 border-amber-400" style={{ boxShadow: '0 4px 20px rgba(13,27,78,0.20)' }}>
-          <div className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Need Approval</div>
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">{t.managerOverview.needApproval}</div>
           <div className="text-2xl font-bold text-[#0D1B4E]">{pendingJobs.length}</div>
           <div className={`text-xs mt-1 font-semibold ${pendingJobs.length > 0 ? 'text-amber-500' : 'text-green-500'}`}>
-            {pendingJobs.length > 0 ? `${employeesNeedingApproval.length} team members` : '✓ All clear'}
+            {pendingJobs.length > 0 ? `${employeesNeedingApproval.length} ${t.managerOverview.teamMembers}` : t.managerOverview.allClear}
           </div>
         </div>
 
         <Link href="/manager/collections">
           <div className="stat-card rounded-2xl p-4 cursor-pointer h-full flex flex-col justify-center" style={{ background: 'linear-gradient(135deg, #DC2626, #b91c1c)', boxShadow: '0 4px 20px rgba(220,38,38,0.35)' }}>
-            <div className="text-xs font-bold text-red-200 uppercase tracking-wide mb-2">Collections</div>
+            <div className="text-xs font-bold text-red-200 uppercase tracking-wide mb-2">{t.managerOverview.collections}</div>
             <div className="text-2xl font-bold text-white">${totalPastDue.toLocaleString()}</div>
-            <div className="text-xs text-red-200 mt-1">{pastDueInvoices.length} invoices past due →</div>
+            <div className="text-xs text-red-200 mt-1">{pastDueInvoices.length} {t.managerOverview.invoicesPastDue}</div>
           </div>
         </Link>
 
         <div className="stat-card bg-white rounded-2xl p-4 border-l-4 border-green-500" style={{ boxShadow: '0 4px 20px rgba(13,27,78,0.20)' }}>
-          <div className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Approved</div>
+          <div className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">{t.managerOverview.approvedLabel}</div>
           <div className="text-2xl font-bold text-[#0D1B4E]">{fullyApprovedCount}<span className="text-base text-gray-400 font-normal"> / {totalEmployeesWithJobs}</span></div>
           <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <div className="h-full bg-green-500 rounded-full transition-all duration-500" style={{ width: totalEmployeesWithJobs > 0 ? `${(fullyApprovedCount / totalEmployeesWithJobs) * 100}%` : '0%' }} />
@@ -149,16 +163,15 @@ export default function ManagerOverviewPage() {
       {/* ── ACTION ITEMS ── */}
       {(employeesNeedingApproval.length > 0 || urgentInvoices.length > 0) && (
         <div>
-          <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Action Required</h2>
+          <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">{t.managerOverview.actionRequired}</h2>
           <div className="grid lg:grid-cols-2 gap-3">
 
-            {/* Pending approvals */}
             {employeesNeedingApproval.length > 0 && (
               <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(13,27,78,0.20)' }}>
                 <div className="px-4 py-3 flex items-center gap-2 border-b border-amber-100" style={{ background: 'rgba(251,191,36,0.06)' }}>
                   <Clock size={15} className="text-amber-500" />
-                  <span className="text-sm font-bold text-[#0D1B4E]">Pending Approvals</span>
-                  <span className="ml-auto text-xs font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">{pendingJobs.length} jobs</span>
+                  <span className="text-sm font-bold text-[#0D1B4E]">{t.managerOverview.pendingApprovals}</span>
+                  <span className="ml-auto text-xs font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">{pendingJobs.length} {t.managerOverview.jobsLabel}</span>
                 </div>
                 {employeesNeedingApproval.map(emp => (
                   <Link key={emp.id} href={`/manager/employee/${emp.id}`}>
@@ -168,28 +181,27 @@ export default function ManagerOverviewPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-[#1A1A2A] text-sm truncate">{emp.name}</div>
-                        <div className="text-xs text-amber-600 font-medium">{emp.pendingCount} job{emp.pendingCount !== 1 ? 's' : ''} waiting</div>
+                        <div className="text-xs text-amber-600 font-medium">{emp.pendingCount} {emp.pendingCount !== 1 ? t.managerOverview.jobsLabel : t.managerOverview.jobsLabel} {lang === 'es' ? 'esperando' : 'waiting'}</div>
                       </div>
-                      <div className="text-xs font-bold text-[#0D1B4E] bg-[#0D1B4E]/6 px-2.5 py-1 rounded-lg">Review →</div>
+                      <div className="text-xs font-bold text-[#0D1B4E] bg-[#0D1B4E]/6 px-2.5 py-1 rounded-lg">{t.managerOverview.review}</div>
                     </div>
                   </Link>
                 ))}
               </div>
             )}
 
-            {/* Top overdue invoices */}
             {urgentInvoices.length > 0 && (
               <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(13,27,78,0.20)' }}>
                 <div className="px-4 py-3 flex items-center gap-2 border-b border-red-100" style={{ background: 'rgba(220,38,38,0.04)' }}>
                   <AlertCircle size={15} className="text-red-500" />
-                  <span className="text-sm font-bold text-[#0D1B4E]">Oldest Invoices</span>
-                  <Link href="/manager/collections" className="ml-auto text-xs text-[#1DC8FF] font-semibold hover:underline">View all →</Link>
+                  <span className="text-sm font-bold text-[#0D1B4E]">{t.managerOverview.oldestInvoices}</span>
+                  <Link href="/manager/collections" className="ml-auto text-xs text-[#1DC8FF] font-semibold hover:underline">{t.managerOverview.viewAll}</Link>
                 </div>
                 {urgentInvoices.map(inv => (
                   <div key={inv.id} className="flex items-center px-4 py-3 border-b border-gray-50 last:border-0">
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-[#1A1A2A] text-sm truncate">{inv.client}</div>
-                      <div className="text-xs text-red-500 font-medium">{inv.daysLate} days overdue</div>
+                      <div className="text-xs text-red-500 font-medium">{inv.daysLate} {t.managerOverview.overdue}</div>
                     </div>
                     <div className="font-bold text-red-600 text-sm shrink-0">${inv.amount.toLocaleString()}</div>
                   </div>
@@ -202,14 +214,9 @@ export default function ManagerOverviewPage() {
 
       {/* ── QUICK ACCESS ── */}
       <div>
-        <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">Quick Access</h2>
+        <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">{t.managerOverview.quickAccess}</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {[
-            { label: 'Franchises',   sub: `${FRANCHISES.length} locations`,   icon: <Building2 size={20} />,  href: '/manager/franchises',  color: 'from-violet-600 to-purple-700' },
-            { label: 'Analytics',    sub: 'Revenue & jobs',                   icon: <BarChart3 size={20} />,  href: '/manager/dashboard',   color: 'from-[#0D1B4E] to-[#1a3282]' },
-            { label: 'Collections',  sub: `$${totalPastDue.toLocaleString()}`, icon: <DollarSign size={20} />, href: '/manager/collections', color: 'from-red-600 to-rose-700' },
-            { label: 'Pay Rates',    sub: 'Rate reference',                   icon: <TrendingUp size={20} />, href: '/admin/pay-rates',     color: 'from-emerald-600 to-green-700' },
-          ].map(item => (
+          {quickItems.map(item => (
             <Link key={item.href} href={item.href}>
               <div className={`card-hover rounded-2xl p-4 cursor-pointer bg-gradient-to-br ${item.color} text-white`} style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.25)' }}>
                 <div className="mb-3 opacity-80">{item.icon}</div>
@@ -224,14 +231,14 @@ export default function ManagerOverviewPage() {
       {/* ── TEAM STATUS ── */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest">Team This Week</h2>
-          <span className="text-xs text-white/30">Jun 2–8, 2026</span>
+          <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest">{t.managerOverview.teamThisWeek}</h2>
+          <span className="text-xs text-white/30">{t.managerOverview.weekLabel}</span>
         </div>
 
         <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 20px rgba(13,27,78,0.20)' }}>
           {employeeStats.map(emp => (
             <Link key={emp.id} href={emp.jobCount > 0 ? `/manager/employee/${emp.id}` : '#'}>
-              <div className={`row-interactive flex items-center px-5 py-3.5 border-b border-gray-100 last:border-0`}>
+              <div className="row-interactive flex items-center px-5 py-3.5 border-b border-gray-100 last:border-0">
                 <div className={`w-2 h-2 rounded-full mr-3 shrink-0 ${
                   emp.status === 'red' ? 'bg-amber-400 status-dot-pending' :
                   emp.status === 'green' ? 'bg-green-500' : 'bg-gray-300'
@@ -244,15 +251,15 @@ export default function ManagerOverviewPage() {
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-[#1A1A2A] text-sm truncate">{emp.name}</div>
                   <div className="text-xs text-gray-400 flex gap-1.5 items-center mt-0.5 flex-wrap">
-                    <span>{emp.jobCount} jobs</span>
+                    <span>{emp.jobCount} {t.managerOverview.jobsLabel}</span>
                     {emp.pendingCount > 0 && (
-                      <span className="text-amber-600 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded font-semibold">{emp.pendingCount} pending</span>
+                      <span className="text-amber-600 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded font-semibold">{emp.pendingCount} {t.managerOverview.pendingCount}</span>
                     )}
                     {emp.status === 'green' && (
-                      <span className="text-green-600 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded font-semibold">✓ Approved</span>
+                      <span className="text-green-600 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded font-semibold">✓ {t.managerOverview.approvedLabel}</span>
                     )}
                     {emp.jobCount === 0 && (
-                      <span className="text-gray-400 italic">No entries yet</span>
+                      <span className="text-gray-400 italic">{t.managerOverview.noEntries}</span>
                     )}
                   </div>
                 </div>
@@ -260,7 +267,7 @@ export default function ManagerOverviewPage() {
                 {emp.jobCount > 0 && (
                   <div className="text-right ml-3 shrink-0">
                     <div className="font-bold text-[#0D1B4E] text-sm">${emp.totalPay.toFixed(0)}</div>
-                    <div className="text-xs text-gray-400">+ $100 drive</div>
+                    <div className="text-xs text-gray-400">+ $100 {t.common.drivePay}</div>
                   </div>
                 )}
 
@@ -275,12 +282,12 @@ export default function ManagerOverviewPage() {
           <div className="px-5 py-3 flex items-center justify-between border-t-2 border-gray-100" style={{ background: 'rgba(29,200,255,0.04)' }}>
             <div className="flex items-center gap-2 text-sm text-[#0D1B4E]/60">
               <Car size={14} className="text-[#1DC8FF]" />
-              <span>Drive Pay ({TEAM_MEMBERS.length} leaders × $100)</span>
+              <span>{t.managerOverview.drivePay} ({TEAM_MEMBERS.length} {t.managerOverview.leadersX})</span>
             </div>
             <span className="font-bold text-[#0D1B4E]">${totalDrivePay.toLocaleString()}</span>
           </div>
           <div className="px-5 py-3 flex items-center justify-between" style={{ background: 'linear-gradient(90deg, rgba(13,27,78,0.04), rgba(29,200,255,0.06))' }}>
-            <span className="font-bold text-[#0D1B4E]">Total Week Payroll</span>
+            <span className="font-bold text-[#0D1B4E]">{t.managerOverview.totalWeekPayroll}</span>
             <span className="font-bold text-[#0D1B4E] text-lg">${grandPayroll.toFixed(2)}</span>
           </div>
         </div>
@@ -289,8 +296,8 @@ export default function ManagerOverviewPage() {
       {/* ── FRANCHISE TEASER ── */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest">Franchise Network</h2>
-          <Link href="/manager/franchises" className="text-xs text-[#1DC8FF] font-semibold hover:underline">View all →</Link>
+          <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest">{t.managerOverview.franchiseNetwork}</h2>
+          <Link href="/manager/franchises" className="text-xs text-[#1DC8FF] font-semibold hover:underline">{t.managerOverview.viewAll}</Link>
         </div>
 
         <div
@@ -302,8 +309,8 @@ export default function ManagerOverviewPage() {
               <Building2 size={20} className="text-purple-300" />
             </div>
             <div>
-              <div className="font-bold text-white">{FRANCHISES.length} Locations · Michigan</div>
-              <div className="text-white/50 text-sm">YTD Network Revenue: <span className="text-green-400 font-bold">${networkRevenue.toLocaleString()}</span></div>
+              <div className="font-bold text-white">{FRANCHISES.length} {t.managerOverview.locationsMichigan}</div>
+              <div className="text-white/50 text-sm">{t.managerOverview.ytdNetworkRevenue}: <span className="text-green-400 font-bold">${networkRevenue.toLocaleString()}</span></div>
             </div>
           </div>
           <div className="flex gap-3">
@@ -316,7 +323,7 @@ export default function ManagerOverviewPage() {
           </div>
           <Link href="/manager/franchises">
             <div className="flex items-center gap-1.5 text-purple-300 text-sm font-semibold hover:text-purple-200 transition-colors">
-              Manage <ChevronRight size={14} />
+              {t.managerOverview.manage} <ChevronRight size={14} />
             </div>
           </Link>
         </div>

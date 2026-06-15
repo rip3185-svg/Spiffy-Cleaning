@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { getSession, logout, isManager } from '@/utils/auth';
-import { BookOpen, CalendarDays, Home, BarChart3, DollarSign, Settings, LogOut, Menu, X, Building2 } from 'lucide-react';
+import { BookOpen, CalendarDays, Home, BarChart3, DollarSign, Settings, LogOut, Menu, X, Building2, Globe } from 'lucide-react';
 import logoPath from '@assets/spiffy_cleaning_logo_transparent.png';
+import { useLang } from '@/i18n/LanguageContext';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const user = getSession();
   const [showDemoBanner, setShowDemoBanner] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { lang, setLang, t } = useLang();
 
   if (!user) {
     setLocation('/login');
@@ -26,28 +28,30 @@ export function AppLayout({ children }: AppLayoutProps) {
     setLocation('/login');
   };
 
+  const toggleLang = () => setLang(lang === 'en' ? 'es' : 'en');
+
   const navItems = manager ? [
-    { label: 'Overview',    path: '/manager/overview',    icon: <Home size={18} /> },
-    { label: 'Franchises',  path: '/manager/franchises',  icon: <Building2 size={18} /> },
-    { label: 'Dashboard',   path: '/manager/dashboard',   icon: <BarChart3 size={18} /> },
-    { label: 'Collections', path: '/manager/collections', icon: <DollarSign size={18} /> },
-    { label: 'Pay Rates',   path: '/admin/pay-rates',     icon: <Settings size={18} /> },
+    { label: t.nav.overview,    path: '/manager/overview',    icon: <Home size={18} /> },
+    { label: t.nav.franchises,  path: '/manager/franchises',  icon: <Building2 size={18} /> },
+    { label: t.nav.dashboard,   path: '/manager/dashboard',   icon: <BarChart3 size={18} /> },
+    { label: t.nav.collections, path: '/manager/collections', icon: <DollarSign size={18} /> },
+    { label: t.nav.payRates,    path: '/admin/pay-rates',     icon: <Settings size={18} /> },
   ] : [
-    { label: 'My Week',  path: '/employee/week',    icon: <BookOpen size={18} /> },
-    { label: 'History',  path: '/employee/history', icon: <CalendarDays size={18} /> },
-    { label: 'Pay Rates',path: '/admin/pay-rates',  icon: <Settings size={18} /> },
+    { label: t.nav.myWeek,   path: '/employee/week',    icon: <BookOpen size={18} /> },
+    { label: t.nav.history,  path: '/employee/history', icon: <CalendarDays size={18} /> },
+    { label: t.nav.payRates, path: '/admin/pay-rates',  icon: <Settings size={18} /> },
   ];
 
   const mobileTabs = manager ? [
-    { label: 'Home',       path: '/manager/overview',    icon: <Home size={22} /> },
-    { label: 'Franchises', path: '/manager/franchises',  icon: <Building2 size={22} /> },
-    { label: 'Stats',      path: '/manager/dashboard',   icon: <BarChart3 size={22} /> },
-    { label: 'Money',      path: '/manager/collections', icon: <DollarSign size={22} /> },
-    { label: 'Rates',      path: '/admin/pay-rates',     icon: <Settings size={22} /> },
+    { label: t.nav.home,       path: '/manager/overview',    icon: <Home size={22} /> },
+    { label: t.nav.franchises, path: '/manager/franchises',  icon: <Building2 size={22} /> },
+    { label: t.nav.stats,      path: '/manager/dashboard',   icon: <BarChart3 size={22} /> },
+    { label: t.nav.money,      path: '/manager/collections', icon: <DollarSign size={22} /> },
+    { label: t.nav.rates,      path: '/admin/pay-rates',     icon: <Settings size={22} /> },
   ] : [
-    { label: 'My Week',  path: '/employee/week',    icon: <BookOpen size={22} /> },
-    { label: 'History',  path: '/employee/history', icon: <CalendarDays size={22} /> },
-    { label: 'Pay Rates',path: '/admin/pay-rates',  icon: <Settings size={22} /> },
+    { label: t.nav.myWeek,  path: '/employee/week',    icon: <BookOpen size={22} /> },
+    { label: t.nav.history, path: '/employee/history', icon: <CalendarDays size={22} /> },
+    { label: t.nav.rates,   path: '/admin/pay-rates',  icon: <Settings size={22} /> },
   ];
 
   const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
@@ -88,6 +92,17 @@ export function AppLayout({ children }: AppLayoutProps) {
           })}
         </nav>
 
+        {/* Language toggle */}
+        <div className="px-4 pb-2">
+          <button
+            onClick={toggleLang}
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-white/50 hover:text-white border border-white/10 hover:bg-white/8 transition-all text-xs font-semibold tracking-wide"
+          >
+            <Globe size={14} />
+            {lang === 'en' ? 'Español' : 'English'}
+          </button>
+        </div>
+
         {/* User footer */}
         <div className="p-4 border-t border-white/10 bg-black/20">
           <div className="flex items-center gap-3">
@@ -99,12 +114,12 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-white font-medium text-sm truncate">{user.name.split(' ')[0]}</div>
-              <div className="text-[#1DC8FF]/80 text-xs">{manager ? 'Owner / Manager' : 'Team Member'}</div>
+              <div className="text-[#1DC8FF]/80 text-xs">{manager ? t.layout.ownerManager : t.layout.teamMember}</div>
             </div>
             <button
               onClick={handleLogout}
               className="p-2 text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-all"
-              title="Log Out"
+              title={t.layout.logOut}
             >
               <LogOut size={16} />
             </button>
@@ -121,12 +136,21 @@ export function AppLayout({ children }: AppLayoutProps) {
           style={{ background: 'linear-gradient(90deg, #0D1B4E, #1a3282)' }}
         >
           <img src={logoPath} alt="Spiffy" className="h-9 w-auto" />
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
-          >
-            <Menu size={22} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleLang}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/20 text-white/70 hover:text-white hover:bg-white/10 transition-all text-xs font-semibold"
+            >
+              <Globe size={13} />
+              {lang === 'en' ? 'ES' : 'EN'}
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+            >
+              <Menu size={22} />
+            </button>
+          </div>
         </header>
 
         {/* Demo Banner */}
@@ -135,7 +159,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             className="flex items-center justify-between px-4 py-2 shrink-0 text-xs font-semibold border-b"
             style={{ background: 'rgba(29,200,255,0.08)', color: '#1DC8FF', borderColor: 'rgba(29,200,255,0.18)' }}
           >
-            <span>✦ Demo Mode — Week of Jun 2–8, 2026 · Real Spiffy team &amp; properties</span>
+            <span>{t.layout.demoBanner}</span>
             <button
               onClick={() => setShowDemoBanner(false)}
               className="ml-3 p-1 rounded hover:bg-white/10 transition-colors shrink-0 text-white/40 hover:text-white"
@@ -214,7 +238,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             </nav>
 
             <div className="p-4 border-t border-white/10 bg-black/20">
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-3">
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-[#0D1B4E]"
                   style={{ background: 'linear-gradient(135deg, #1DC8FF, #00aaee)' }}
@@ -223,14 +247,21 @@ export function AppLayout({ children }: AppLayoutProps) {
                 </div>
                 <div>
                   <div className="text-white font-semibold text-sm">{user.name}</div>
-                  <div className="text-[#1DC8FF]/80 text-xs">{manager ? 'Owner / Manager' : 'Team Member'}</div>
+                  <div className="text-[#1DC8FF]/80 text-xs">{manager ? t.layout.ownerManager : t.layout.teamMember}</div>
                 </div>
               </div>
+              <button
+                onClick={toggleLang}
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-white/60 hover:text-white border border-white/15 hover:bg-white/8 transition-all text-sm font-medium mb-2"
+              >
+                <Globe size={15} />
+                {lang === 'en' ? 'Cambiar a Español' : 'Switch to English'}
+              </button>
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-white/70 hover:text-white border border-white/20 hover:bg-white/10 transition-all text-sm font-medium"
               >
-                <LogOut size={15} /> Log Out
+                <LogOut size={15} /> {t.layout.logOut}
               </button>
             </div>
           </div>

@@ -9,17 +9,22 @@ import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { toast } from 'sonner';
+import { useLang } from '@/i18n/LanguageContext';
 
-const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAYS_OF_WEEK_EN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAYS_OF_WEEK_ES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
 export default function ManagerEmployeeDetailPage() {
   const [, params] = useRoute('/manager/employee/:id');
   const employeeId = params?.id;
   const employee = TEAM_MEMBERS.find(e => e.id === employeeId);
-  
+  const { t, lang } = useLang();
+
   const [jobs, setJobs] = useState<JobEntry[]>([]);
   const [confirmApproveAll, setConfirmApproveAll] = useState(false);
   const [confirmLock, setConfirmLock] = useState(false);
+
+  const DAYS_OF_WEEK = lang === 'es' ? DAYS_OF_WEEK_ES : DAYS_OF_WEEK_EN;
 
   useEffect(() => {
     if (employeeId) {
@@ -27,7 +32,7 @@ export default function ManagerEmployeeDetailPage() {
     }
   }, [employeeId]);
 
-  if (!employee) return <div>Employee not found</div>;
+  if (!employee) return <div>{t.common.notFound}</div>;
 
   const pendingJobs = jobs.filter(j => j.status === 'pending');
   const approvedJobs = jobs.filter(j => j.status === 'approved');
@@ -43,7 +48,7 @@ export default function ManagerEmployeeDetailPage() {
     updateJob(job.id, { status: 'approved' });
     setJobs(getJobsForEmployee(employeeId!, DEMO_WEEK));
     const pay = calculatePay(job);
-    toast.success(`Approved 1 job for ${employee.name}. Pay: $${pay?.myPay.toFixed(2)}`);
+    toast.success(`${t.employeeDetail.approveJob} — ${employee.name}: $${pay?.myPay.toFixed(2)}`);
   };
 
   const handleApproveAll = () => {
@@ -51,7 +56,7 @@ export default function ManagerEmployeeDetailPage() {
       updateJob(job.id, { status: 'approved' });
     });
     setJobs(getJobsForEmployee(employeeId!, DEMO_WEEK));
-    toast.success(`Approved all ${pendingJobs.length} jobs for ${employee.name}`);
+    toast.success(`${t.employeeDetail.approveAll} — ${employee.name}`);
   };
 
   const handleLockWeek = () => {
@@ -64,18 +69,15 @@ export default function ManagerEmployeeDetailPage() {
       status: 'locked',
       lockedAt: new Date().toISOString()
     });
-    // In a real app we'd update all jobs to 'locked' here
-    toast.success(`Locked week for ${employee.name}`);
+    toast.success(`${t.employeeDetail.lockWeek} — ${employee.name}`);
   };
 
-  // Group jobs by day
   const jobsByDay: Record<number, JobEntry[]> = {};
   jobs.forEach(j => {
     if (!jobsByDay[j.dayOfWeek]) jobsByDay[j.dayOfWeek] = [];
     jobsByDay[j.dayOfWeek].push(j);
   });
 
-  // Find prev/next employees for navigation
   const currentIndex = TEAM_MEMBERS.findIndex(e => e.id === employeeId);
   const prevEmp = currentIndex > 0 ? TEAM_MEMBERS[currentIndex - 1] : null;
   const nextEmp = currentIndex < TEAM_MEMBERS.length - 1 ? TEAM_MEMBERS[currentIndex + 1] : null;
@@ -84,36 +86,36 @@ export default function ManagerEmployeeDetailPage() {
     <div className="pb-24">
       <div className="flex items-center text-sm text-[#1DC8FF] mb-4 font-medium">
         <Link href="/manager/overview" className="flex items-center hover:underline">
-          <ChevronLeft size={16} className="mr-1" /> Back to Team
+          <ChevronLeft size={16} className="mr-1" /> {t.employeeDetail.backToTeam}
         </Link>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">{employee.name}</h1>
-          <p className="text-white/50 text-sm mt-0.5">Week of Jun 2–8, 2026</p>
+          <p className="text-white/50 text-sm mt-0.5">{t.employeeDetail.weekOf}</p>
         </div>
-        
+
         {pendingJobs.length > 0 && (
-          <Button 
+          <Button
             onClick={() => setConfirmApproveAll(true)}
             className="bg-[#16A34A] text-white hover:bg-green-700"
           >
-            Approve All ({pendingJobs.length})
+            {t.employeeDetail.approveAll} ({pendingJobs.length})
           </Button>
         )}
       </div>
 
       {jobs.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm p-8 text-center text-gray-500">
-          No job entries for this week.
+          {t.employeeDetail.noJobs}
         </div>
       ) : (
         <div className="space-y-6">
           {DAYS_OF_WEEK.map((dayName, dayIndex) => {
             const dayJobs = jobsByDay[dayIndex];
             if (!dayJobs || dayJobs.length === 0) return null;
-            
+
             return (
               <div key={dayIndex} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
                 <div className="bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-600 uppercase border-b border-gray-200">
@@ -123,30 +125,30 @@ export default function ManagerEmployeeDetailPage() {
                   {dayJobs.map(job => {
                     const pay = calculatePay(job);
                     const isApproved = job.status === 'approved' || job.status === 'locked';
-                    
+
                     return (
                       <div key={job.id} className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${isApproved ? 'bg-white' : 'bg-yellow-50/30'}`}>
                         <div className="flex-1">
                           <div className="font-bold text-[#1A1A2A] text-lg">{job.property}</div>
                           <div className="text-gray-600 text-sm mt-1">
-                            {job.jobType} {job.tier ? `(Tier ${job.tier})` : ''} • Qty: {job.quantity} • Team: {job.teamSize}
+                            {job.jobType} {job.tier ? `(${t.employeeDetail.tier} ${job.tier})` : ''} · {t.employeeDetail.qty}: {job.quantity} · {t.employeeDetail.team}: {job.teamSize}
                           </div>
                           <div className="text-sm font-medium text-green-700 mt-1">
-                            Pay: ${pay?.myPay.toFixed(2)}
+                            {t.employeeDetail.pay}: ${pay?.myPay.toFixed(2)}
                           </div>
                         </div>
-                        
+
                         <div className="shrink-0">
                           {isApproved ? (
                             <Button disabled variant="outline" className="w-full sm:w-auto border-green-200 bg-green-50 text-green-700 opacity-100">
-                              <Check size={16} className="mr-2" /> Approved
+                              <Check size={16} className="mr-2" /> {t.employeeDetail.approved}
                             </Button>
                           ) : (
-                            <Button 
+                            <Button
                               onClick={() => handleApproveJob(job)}
                               className="w-full sm:w-auto bg-yellow-500 text-white hover:bg-yellow-600 border-none shadow-sm"
                             >
-                              Approve
+                              {t.employeeDetail.approveJob}
                             </Button>
                           )}
                         </div>
@@ -163,34 +165,34 @@ export default function ManagerEmployeeDetailPage() {
       {isAllApproved && (
         <div className="mt-8 bg-green-50 border border-green-200 rounded-xl p-6 text-center">
           <Check size={48} className="mx-auto text-green-500 mb-4" />
-          <h3 className="text-xl font-bold text-green-800 mb-2">All Jobs Approved</h3>
-          <p className="text-green-700 mb-6">Total calculated pay: ${totalPay.toFixed(2)}</p>
-          <Button 
+          <h3 className="text-xl font-bold text-green-800 mb-2">{t.employeeDetail.allApproved}</h3>
+          <p className="text-green-700 mb-6">{t.employeeDetail.totalCalcPay}: ${totalPay.toFixed(2)}</p>
+          <Button
             onClick={() => setConfirmLock(true)}
             variant="outline"
             className="border-green-600 text-green-700 hover:bg-green-100"
           >
-            Lock Week Permanently
+            {t.employeeDetail.lockWeek}
           </Button>
         </div>
       )}
 
       <div className="fixed bottom-0 left-0 right-0 lg:left-[220px] bg-white border-t border-gray-200 p-4 flex justify-between items-center z-30">
         <Link href={prevEmp ? `/manager/employee/${prevEmp.id}` : '#'} className={!prevEmp ? 'pointer-events-none opacity-50' : ''}>
-          <Button variant="outline" className="text-gray-600"><ChevronLeft size={16} className="mr-1" /> Prev Employee</Button>
+          <Button variant="outline" className="text-gray-600"><ChevronLeft size={16} className="mr-1" /> {t.employeeDetail.prevEmployee}</Button>
         </Link>
-        <div className="font-bold text-[#0D1B4E]">Total: ${totalPay.toFixed(2)}</div>
+        <div className="font-bold text-[#0D1B4E]">{t.employeeDetail.total}: ${totalPay.toFixed(2)}</div>
         <Link href={nextEmp ? `/manager/employee/${nextEmp.id}` : '#'} className={!nextEmp ? 'pointer-events-none opacity-50' : ''}>
-          <Button variant="outline" className="text-gray-600">Next <ChevronRight size={16} className="ml-1" /></Button>
+          <Button variant="outline" className="text-gray-600">{t.employeeDetail.nextEmployee} <ChevronRight size={16} className="ml-1" /></Button>
         </Link>
       </div>
 
       <ConfirmDialog
         open={confirmApproveAll}
         onOpenChange={setConfirmApproveAll}
-        title={`Approve all jobs for ${employee.name}?`}
-        description={`This will approve ${pendingJobs.length} jobs totaling $${totalPay.toFixed(2)}. They will be marked as ready for payroll.`}
-        confirmLabel="Yes, Approve All"
+        title={t.employeeDetail.confirmApproveTitle(employee.name)}
+        description={t.employeeDetail.confirmApproveDesc(pendingJobs.length, totalPay.toFixed(2))}
+        confirmLabel={t.employeeDetail.confirmApproveBtn}
         onConfirm={handleApproveAll}
         variant="success"
       />
@@ -198,9 +200,9 @@ export default function ManagerEmployeeDetailPage() {
       <ConfirmDialog
         open={confirmLock}
         onOpenChange={setConfirmLock}
-        title={`Lock week for ${employee.name}?`}
-        description="This will lock the records for this week permanently. The employee will not be able to make any changes."
-        confirmLabel="Lock Week"
+        title={t.employeeDetail.confirmLockTitle(employee.name)}
+        description={t.employeeDetail.confirmLockDesc}
+        confirmLabel={t.employeeDetail.confirmLockBtn}
         onConfirm={handleLockWeek}
         variant="primary"
       />

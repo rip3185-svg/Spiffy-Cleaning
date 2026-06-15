@@ -12,8 +12,9 @@ import type { JobEntry } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ALL_USERS } from '@/data/employees';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useLang } from '@/i18n/LanguageContext';
 
-const DAYS = [
+const DAYS_EN = [
   { name: 'Monday',    short: 'Mon' },
   { name: 'Tuesday',   short: 'Tue' },
   { name: 'Wednesday', short: 'Wed' },
@@ -22,12 +23,24 @@ const DAYS = [
   { name: 'Saturday',  short: 'Sat' },
   { name: 'Sunday',    short: 'Sun' },
 ];
+const DAYS_ES = [
+  { name: 'Lunes',     short: 'Lun' },
+  { name: 'Martes',    short: 'Mar' },
+  { name: 'Miércoles', short: 'Mié' },
+  { name: 'Jueves',    short: 'Jue' },
+  { name: 'Viernes',   short: 'Vie' },
+  { name: 'Sábado',    short: 'Sáb' },
+  { name: 'Domingo',   short: 'Dom' },
+];
 
 export default function EmployeeWeekPage() {
   const user = getSession();
   const [jobs, setJobs] = useState<JobEntry[]>([]);
   const [teamLeader, setTeamLeader] = useState<string>(user?.id || '');
   const [teamSize, setTeamSize] = useState<2 | 3 | 4>(3);
+  const { t, lang } = useLang();
+
+  const DAYS = lang === 'es' ? DAYS_ES : DAYS_EN;
 
   useEffect(() => {
     if (user) {
@@ -113,10 +126,10 @@ export default function EmployeeWeekPage() {
           <div className="flex items-start justify-between">
             <div>
               <h2 className="font-bold text-xl text-white">{user.name}</h2>
-              <p className="text-[#1DC8FF]/80 text-sm mt-0.5">Jun 2–8, 2026</p>
+              <p className="text-[#1DC8FF]/80 text-sm mt-0.5">{t.week.weekOf}</p>
             </div>
             <div className="text-right">
-              <div className="text-[#1DC8FF]/60 text-xs font-semibold uppercase tracking-wide">Approved</div>
+              <div className="text-[#1DC8FF]/60 text-xs font-semibold uppercase tracking-wide">{t.week.approved}</div>
               <div className="text-white font-bold text-2xl">${approvedPay.toFixed(2)}</div>
             </div>
           </div>
@@ -124,10 +137,10 @@ export default function EmployeeWeekPage() {
 
         <div className="bg-white px-5 py-4 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Team Leader</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{t.week.teamLeader}</label>
             <Select value={teamLeader} onValueChange={handleTeamLeaderChange}>
               <SelectTrigger className="w-full min-h-[44px] bg-gray-50 border-gray-200 rounded-xl">
-                <SelectValue placeholder="Select team leader" />
+                <SelectValue placeholder={t.week.selectLeader} />
               </SelectTrigger>
               <SelectContent>
                 {ALL_USERS.filter(u => u.role === 'employee').map(u => (
@@ -138,7 +151,7 @@ export default function EmployeeWeekPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Team Size</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">{t.week.teamSize}</label>
             <div className="flex gap-2">
               {([2, 3, 4] as const).map(size => (
                 <button
@@ -181,7 +194,7 @@ export default function EmployeeWeekPage() {
                 </div>
                 {hasJobs && (
                   <div className="flex items-center gap-1.5">
-                    <span className="text-white/50 text-xs">{dayJobs.length} {dayJobs.length === 1 ? 'job' : 'jobs'}</span>
+                    <span className="text-white/50 text-xs">{dayJobs.length} {dayJobs.length === 1 ? t.week.job : t.week.jobs}</span>
                   </div>
                 )}
               </div>
@@ -199,7 +212,7 @@ export default function EmployeeWeekPage() {
                 {/* Daily Total row */}
                 {hasJobs && (
                   <div className="flex items-center justify-between px-4 py-2.5 rounded-xl" style={{ background: 'linear-gradient(90deg, rgba(29,200,255,0.08), rgba(29,200,255,0.04))' }}>
-                    <span className="text-xs font-bold text-[#0D1B4E]/60 uppercase tracking-wide">Daily Total</span>
+                    <span className="text-xs font-bold text-[#0D1B4E]/60 uppercase tracking-wide">{t.week.dailyTotal}</span>
                     <span className="font-bold text-[#0D1B4E] text-base">${dayTotal.toFixed(2)}</span>
                   </div>
                 )}
@@ -210,7 +223,7 @@ export default function EmployeeWeekPage() {
                   style={{ border: '2px dashed rgba(29,200,255,0.5)', color: '#1DC8FF', background: 'rgba(29,200,255,0.04)' }}
                   data-testid={`btn-add-job-${dayIndex}`}
                 >
-                  + Add Job for {name}
+                  {t.week.addJob} {name}
                 </button>
               </div>
             </div>
@@ -224,13 +237,13 @@ export default function EmployeeWeekPage() {
         style={{ background: 'linear-gradient(90deg, #0D1B4E 0%, #0f2060 100%)', boxShadow: '0 -4px 20px rgba(13,27,78,0.3)' }}
       >
         <div className="flex-1">
-          <div className="text-white/50 text-xs">Week Approved Pay</div>
+          <div className="text-white/50 text-xs">{t.week.weekApprovedPay}</div>
           <div className="text-[#1DC8FF] font-bold text-xl leading-tight">${approvedPay.toFixed(2)}</div>
         </div>
 
         {pendingPay > 0 && (
           <div className="text-right">
-            <div className="text-white/40 text-xs">+ Pending</div>
+            <div className="text-white/40 text-xs">{t.week.pending}</div>
             <div className="text-yellow-400 font-bold">${pendingPay.toFixed(2)}</div>
           </div>
         )}
@@ -241,31 +254,31 @@ export default function EmployeeWeekPage() {
               className="text-[#0D1B4E] font-bold text-sm px-4 py-2 rounded-xl flex items-center gap-1.5"
               style={{ background: 'linear-gradient(135deg, #1DC8FF, #00b8f0)' }}
             >
-              Summary <ChevronRight size={14} />
+              {t.week.summary} <ChevronRight size={14} />
             </Button>
           </SheetTrigger>
           <SheetContent side="bottom" className="h-auto rounded-t-3xl">
             <SheetHeader className="mb-2">
-              <SheetTitle className="text-[#0D1B4E] text-xl">Pay Summary</SheetTitle>
-              <p className="text-gray-400 text-sm">Week of Jun 2–8, 2026</p>
+              <SheetTitle className="text-[#0D1B4E] text-xl">{t.week.paySummary}</SheetTitle>
+              <p className="text-gray-400 text-sm">{lang === 'es' ? 'Semana del' : 'Week of'} {t.week.weekOf}</p>
             </SheetHeader>
 
             <div className="py-4 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Jobs Pay (Approved)</span>
+                <span className="text-gray-600">{t.week.jobsPayApproved}</span>
                 <span className="font-bold text-[#0D1B4E] text-lg">${approvedPay.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between items-center rounded-xl px-4 py-3" style={{ background: 'rgba(29,200,255,0.08)' }}>
                 <div className="flex items-center gap-2 text-[#0D1B4E]">
                   <Car size={16} className="text-[#1DC8FF]" />
-                  <span className="font-semibold">Weekly Drive Pay</span>
+                  <span className="font-semibold">{t.week.weekDrivePay}</span>
                 </div>
                 <span className="font-bold text-[#1DC8FF] text-lg">+${WEEKLY_DRIVE_PAY.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Deductions</span>
+                <span className="text-gray-600">{t.week.deductions}</span>
                 <span className="font-semibold text-red-500">-$0.00</span>
               </div>
 
@@ -275,7 +288,7 @@ export default function EmployeeWeekPage() {
                 className="flex justify-between items-center rounded-xl px-4 py-4"
                 style={{ background: 'linear-gradient(135deg, #0D1B4E, #162774)' }}
               >
-                <span className="text-white font-bold text-lg">Total Pay</span>
+                <span className="text-white font-bold text-lg">{t.week.totalPay}</span>
                 <span className="text-[#1DC8FF] font-bold text-2xl">${grandTotal.toFixed(2)}</span>
               </div>
 
@@ -283,7 +296,7 @@ export default function EmployeeWeekPage() {
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
                   <Clock className="text-amber-500 shrink-0 mt-0.5" size={18} />
                   <p className="text-sm text-amber-800">
-                    <span className="font-semibold">{jobs.filter(j => j.status === 'pending').length} jobs pending approval</span> — an additional <span className="font-semibold">${pendingPay.toFixed(2)}</span> will be added once Dexter approves them.
+                    <span className="font-semibold">{jobs.filter(j => j.status === 'pending').length} {t.week.pendingNote}</span> — {t.week.anAdditional} <span className="font-semibold">${pendingPay.toFixed(2)}</span> {t.week.pendingNote2}
                   </p>
                 </div>
               )}
@@ -300,6 +313,7 @@ function JobCard({ job, onUpdate, onDelete }: {
   onUpdate: (updates: Partial<JobEntry>) => void;
   onDelete: () => void;
 }) {
+  const { t, lang } = useLang();
   const isLocked = job.status !== 'pending';
   const payResult = calculatePay(job);
   const isFlatRate = FLAT_RATE_TYPES.has(job.jobType);
@@ -315,16 +329,16 @@ function JobCard({ job, onUpdate, onDelete }: {
     }`}>
       {isNewService && (
         <div className="px-4 py-1.5 text-xs font-bold text-white flex items-center gap-1.5" style={{ background: 'linear-gradient(90deg, #7c3aed, #9333ea)' }}>
-          ✦ Additional Service
+          ✦ {t.week.additionalService}
         </div>
       )}
 
       <div className="p-4 space-y-3">
         {/* Property */}
         <div>
-          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Property</label>
+          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">{t.week.property}</label>
           {isLocked ? (
-            <div className="font-semibold text-[#1A1A2A]">{job.property || 'Not set'}</div>
+            <div className="font-semibold text-[#1A1A2A]">{job.property || t.week.notSet}</div>
           ) : (
             <PropertySearch value={job.property} onChange={prop => onUpdate({ property: prop })} />
           )}
@@ -332,17 +346,18 @@ function JobCard({ job, onUpdate, onDelete }: {
 
         {/* Job Type */}
         <div>
-          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Job Type</label>
+          <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">{t.week.jobType}</label>
           {isLocked ? (
             <div className="font-semibold text-[#1A1A2A]">{jobLabel}</div>
           ) : (
             <Select value={job.jobType} onValueChange={val => onUpdate({ jobType: val, tier: undefined, specialtyPay: undefined })}>
               <SelectTrigger className="w-full min-h-[44px] bg-gray-50 rounded-xl border-gray-200">
-                <SelectValue placeholder="Select job type" />
+                <SelectValue placeholder={t.week.selectJobType} />
               </SelectTrigger>
               <SelectContent>
-                {['Standard', 'Additional Services'].map(group => {
-                  const opts = JOB_TYPE_OPTIONS.filter(o => o.group === group);
+                {[t.week.standard, t.week.additionalServices].map((group, gi) => {
+                  const groupKey = gi === 0 ? 'Standard' : 'Additional Services';
+                  const opts = JOB_TYPE_OPTIONS.filter(o => o.group === groupKey);
                   return (
                     <React.Fragment key={group}>
                       <div className="px-2 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wide">{group}</div>
@@ -360,16 +375,16 @@ function JobCard({ job, onUpdate, onDelete }: {
         {/* Clubhouse tier */}
         {job.jobType === 'clubhouse' && !isLocked && (
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Clubhouse Size</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">{t.week.clubhouseSize}</label>
             <div className="flex gap-2">
-              {['150', '120', '80'].map(t => (
+              {['150', '120', '80'].map(tier => (
                 <button
-                  key={t}
-                  onClick={() => onUpdate({ tier: t })}
-                  className={`flex-1 min-h-[40px] rounded-xl font-semibold transition-all ${job.tier === t ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                  style={job.tier === t ? { background: 'linear-gradient(135deg, #0D1B4E, #1a3282)' } : {}}
+                  key={tier}
+                  onClick={() => onUpdate({ tier })}
+                  className={`flex-1 min-h-[40px] rounded-xl font-semibold transition-all ${job.tier === tier ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                  style={job.tier === tier ? { background: 'linear-gradient(135deg, #0D1B4E, #1a3282)' } : {}}
                 >
-                  ${t}
+                  ${tier}
                 </button>
               ))}
             </div>
@@ -379,27 +394,27 @@ function JobCard({ job, onUpdate, onDelete }: {
         {/* Club hallway tier */}
         {job.jobType === 'club_hallway' && !isLocked && (
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Rate Tier</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">{t.week.rateTier}</label>
             <div className="flex gap-2">
-              {['725', '500'].map(t => (
+              {['725', '500'].map(tier => (
                 <button
-                  key={t}
-                  onClick={() => onUpdate({ tier: t })}
-                  className={`flex-1 min-h-[40px] rounded-xl font-semibold transition-all ${job.tier === t ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                  style={job.tier === t ? { background: 'linear-gradient(135deg, #0D1B4E, #1a3282)' } : {}}
+                  key={tier}
+                  onClick={() => onUpdate({ tier })}
+                  className={`flex-1 min-h-[40px] rounded-xl font-semibold transition-all ${job.tier === tier ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                  style={job.tier === tier ? { background: 'linear-gradient(135deg, #0D1B4E, #1a3282)' } : {}}
                 >
-                  ${t}
+                  ${tier}
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        {/* Flat-rate pay input (specialty, carpet, painting) */}
+        {/* Flat-rate pay input */}
         {isFlatRate && !isLocked && (
           <div>
             <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">
-              {job.jobType === 'carpet_cleaning' ? 'Carpet Cleaning Pay' : job.jobType === 'painting' ? 'Painting Pay' : 'Specialty Pay'}
+              {job.jobType === 'carpet_cleaning' ? t.week.carpetPay : job.jobType === 'painting' ? t.week.paintingPay : t.week.specialtyPay}
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">$</span>
@@ -419,7 +434,7 @@ function JobCard({ job, onUpdate, onDelete }: {
         {/* Flat-rate display when locked */}
         {isFlatRate && isLocked && (
           <div>
-            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Pay</label>
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">{lang === 'es' ? 'Pago' : 'Pay'}</label>
             <div className="font-bold text-[#0D1B4E]">${(job.specialtyPay ?? 0).toFixed(2)}</div>
           </div>
         )}
@@ -428,7 +443,7 @@ function JobCard({ job, onUpdate, onDelete }: {
         {!isFlatRate && (
           <div className="flex items-center justify-between">
             <div>
-              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Quantity</label>
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">{t.week.quantity}</label>
               {isLocked ? (
                 <div className="font-bold text-2xl text-[#0D1B4E]">{job.quantity}</div>
               ) : (
@@ -439,7 +454,7 @@ function JobCard({ job, onUpdate, onDelete }: {
               <button
                 onClick={onDelete}
                 className="p-3 text-gray-300 hover:text-red-500 rounded-xl hover:bg-red-50 transition-all mt-4"
-                title="Delete job"
+                title={t.week.remove}
               >
                 <Trash2 size={20} />
               </button>
@@ -452,7 +467,7 @@ function JobCard({ job, onUpdate, onDelete }: {
             onClick={onDelete}
             className="flex items-center gap-1.5 text-gray-300 hover:text-red-500 text-xs font-medium transition-all"
           >
-            <Trash2 size={14} /> Remove
+            <Trash2 size={14} /> {t.week.remove}
           </button>
         )}
 
@@ -463,7 +478,7 @@ function JobCard({ job, onUpdate, onDelete }: {
             style={{ background: 'linear-gradient(90deg, rgba(13,27,78,0.05), rgba(29,200,255,0.06))' }}
           >
             <span className="text-[#0D1B4E]/70 text-sm font-medium">
-              {isFlatRate ? 'This Job' : job.isLeader ? 'Leader Pay' : 'Member Pay'}
+              {isFlatRate ? t.week.thisJob : job.isLeader ? t.week.leaderPay : t.week.memberPay}
             </span>
             <span className="font-bold text-[#0D1B4E] text-lg">${payResult.myPay.toFixed(2)}</span>
           </div>
@@ -474,17 +489,17 @@ function JobCard({ job, onUpdate, onDelete }: {
           {job.status === 'pending' ? (
             <div className="flex items-center gap-2 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-amber-100">
               <div className="w-2 h-2 rounded-full bg-amber-400 status-dot-pending" />
-              Waiting for approval
+              {t.week.waitingApproval}
             </div>
           ) : job.status === 'approved' ? (
             <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-emerald-100">
               <CheckCircle size={13} className="text-emerald-500" />
-              Approved by Dexter
+              {t.week.approvedByDexter}
             </div>
           ) : (
             <div className="flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full text-xs font-semibold">
               <div className="w-2 h-2 rounded-full bg-gray-400" />
-              Locked
+              {t.week.locked}
             </div>
           )}
         </div>

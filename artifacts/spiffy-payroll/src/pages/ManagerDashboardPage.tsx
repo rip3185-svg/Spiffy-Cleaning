@@ -4,10 +4,12 @@ import { TEAM_MEMBERS } from '@/data/employees';
 import { getJobs } from '@/utils/storage';
 import { calculatePay } from '@/utils/payCalc';
 import type { JobEntry } from '@/types';
+import { useLang } from '@/i18n/LanguageContext';
 
 export default function ManagerDashboardPage() {
   const [jobs, setJobs] = useState<JobEntry[]>([]);
-  
+  const { t } = useLang();
+
   useEffect(() => {
     setJobs(getJobs().filter(j => j.weekStart === DEMO_WEEK));
   }, []);
@@ -30,14 +32,12 @@ export default function ManagerDashboardPage() {
     };
   }).filter(e => e.jobCount > 0).sort((a, b) => b.totalPay - a.totalPay);
 
-  // Calculate property data
   const propertyDataMap: Record<string, { jobs: number, laborCost: number }> = {};
   jobs.forEach(j => {
     if (!j.property) return;
     if (!propertyDataMap[j.property]) propertyDataMap[j.property] = { jobs: 0, laborCost: 0 };
     propertyDataMap[j.property].jobs += 1;
     const pr = calculatePay(j);
-    // Rough estimate of total labor cost for the job row
     if (pr) propertyDataMap[j.property].laborCost += pr.rowTotal;
   });
 
@@ -55,43 +55,42 @@ export default function ManagerDashboardPage() {
   return (
     <div className="pb-24">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="text-white/50 text-sm mt-0.5">Week of Jun 2–8, 2026</p>
+        <h1 className="text-2xl font-bold text-white">{t.dashboard.title}</h1>
+        <p className="text-white/50 text-sm mt-0.5">{t.dashboard.weekOf}</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-          <div className="text-gray-500 text-sm font-medium mb-1">Total Payroll</div>
+          <div className="text-gray-500 text-sm font-medium mb-1">{t.dashboard.totalPayroll}</div>
           <div className="text-2xl font-bold text-[#0D1B4E]">${totalPayroll.toFixed(2)}</div>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-          <div className="text-gray-500 text-sm font-medium mb-1">Unapproved</div>
+          <div className="text-gray-500 text-sm font-medium mb-1">{t.dashboard.unapproved}</div>
           <div className="text-2xl font-bold text-yellow-600">{unapprovedCount}</div>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-          <div className="text-gray-500 text-sm font-medium mb-1">Total Jobs</div>
+          <div className="text-gray-500 text-sm font-medium mb-1">{t.dashboard.totalJobs}</div>
           <div className="text-2xl font-bold text-[#0D1B4E]">{totalJobs}</div>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-          <div className="text-gray-500 text-sm font-medium mb-1">Top Property</div>
+          <div className="text-gray-500 text-sm font-medium mb-1">{t.dashboard.topProperty}</div>
           <div className="text-lg font-bold text-[#0D1B4E] truncate" title={topProperty}>{topProperty}</div>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Payroll by Employee */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 font-semibold text-[#0D1B4E]">
-            Payroll by Employee
+            {t.dashboard.payrollByEmp}
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 text-gray-500">
-                  <th className="p-3 font-medium">Name</th>
-                  <th className="p-3 font-medium text-center">Jobs</th>
-                  <th className="p-3 font-medium text-center">Status</th>
-                  <th className="p-3 font-medium text-right">Total Pay</th>
+                  <th className="p-3 font-medium">{t.dashboard.name}</th>
+                  <th className="p-3 font-medium text-center">{t.dashboard.jobs}</th>
+                  <th className="p-3 font-medium text-center">{t.dashboard.status}</th>
+                  <th className="p-3 font-medium text-right">{t.dashboard.totalPay}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -101,35 +100,34 @@ export default function ManagerDashboardPage() {
                     <td className="p-3 text-center">{emp.jobCount}</td>
                     <td className="p-3 text-center">
                       {emp.pendingCount > 0 ? (
-                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Pending</span>
+                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">{t.dashboard.pending}</span>
                       ) : (
-                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Approved</span>
+                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">{t.dashboard.approved}</span>
                       )}
                     </td>
                     <td className="p-3 text-right font-bold">${emp.totalPay.toFixed(2)}</td>
                   </tr>
                 ))}
                 {employeeData.length === 0 && (
-                  <tr><td colSpan={4} className="p-4 text-center text-gray-500">No data</td></tr>
+                  <tr><td colSpan={4} className="p-4 text-center text-gray-500">{t.dashboard.noData}</td></tr>
                 )}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* Labor by Property */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 font-semibold text-[#0D1B4E]">
-            Estimated Labor Cost by Property
+            {t.dashboard.laborByProp}
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 text-gray-500">
-                  <th className="p-3 font-medium">Property</th>
-                  <th className="p-3 font-medium text-center">Jobs</th>
-                  <th className="p-3 font-medium text-right">Labor Cost</th>
-                  <th className="p-3 font-medium text-right">%</th>
+                  <th className="p-3 font-medium">{t.dashboard.property}</th>
+                  <th className="p-3 font-medium text-center">{t.dashboard.jobs}</th>
+                  <th className="p-3 font-medium text-right">{t.dashboard.laborCost}</th>
+                  <th className="p-3 font-medium text-right">{t.dashboard.pct}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -142,7 +140,7 @@ export default function ManagerDashboardPage() {
                   </tr>
                 ))}
                 {propertyData.length === 0 && (
-                  <tr><td colSpan={4} className="p-4 text-center text-gray-500">No data</td></tr>
+                  <tr><td colSpan={4} className="p-4 text-center text-gray-500">{t.dashboard.noData}</td></tr>
                 )}
               </tbody>
             </table>

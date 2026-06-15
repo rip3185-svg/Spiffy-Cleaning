@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "gMVyEIC2uBB3x-kLrSawK"
+uri = "file://spiffy-payroll-code.tar.gz"
+type = "unspecified"
+title = "spiffy-payroll-code.tar.gz — full source (80KB)"

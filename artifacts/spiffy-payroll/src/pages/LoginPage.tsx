@@ -13,7 +13,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [loadingId, setLoadingId] = useState<string | null>(null);
   const { t } = useLang();
 
   const handleLogin = (e?: React.FormEvent) => {
@@ -31,18 +30,14 @@ export default function LoginPage() {
   };
 
   const handleTileLogin = (id: string) => {
-    setLoadingId(id);
-    setTimeout(() => {
-      const user = loginById(id);
-      if (user) {
-        if (user.role === 'manager' || user.role === 'admin') {
-          setLocation('/manager/overview');
-        } else {
-          setLocation('/employee/week');
-        }
+    const user = loginById(id);
+    if (user) {
+      if (user.role === 'manager' || user.role === 'admin') {
+        setLocation('/manager/overview');
+      } else {
+        setLocation('/employee/week');
       }
-      setLoadingId(null);
-    }, 180);
+    }
   };
 
   const dexter = ALL_USERS.find(u => u.id === 'dexter');
@@ -129,7 +124,6 @@ export default function LoginPage() {
         {dexter && (
           <button
             onClick={() => handleTileLogin(dexter.id)}
-            disabled={loadingId === dexter.id}
             className="w-full group relative overflow-hidden rounded-2xl mb-3 text-left transition-all duration-200 active:scale-[0.98]"
             style={{ background: 'linear-gradient(135deg, #1DC8FF 0%, #00aaee 100%)', boxShadow: '0 4px 20px rgba(29,200,255,0.4)' }}
             data-testid="tile-login-dexter"
@@ -152,7 +146,6 @@ export default function LoginPage() {
             <button
               key={emp.id}
               onClick={() => handleTileLogin(emp.id)}
-              disabled={loadingId === emp.id}
               className="group relative bg-white/95 backdrop-blur rounded-2xl text-left transition-all duration-150 hover:shadow-[0_8px_24px_rgba(13,27,78,0.2)] hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0 overflow-hidden"
               style={{ boxShadow: '0 2px 8px rgba(13,27,78,0.12)' }}
               data-testid={`tile-login-${emp.id}`}

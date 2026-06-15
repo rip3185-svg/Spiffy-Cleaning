@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { getSession, logout, isManager } from '@/utils/auth';
 import { BookOpen, CalendarDays, Home, BarChart3, DollarSign, Settings, LogOut, Menu, X, Building2, Globe } from 'lucide-react';
@@ -15,10 +15,6 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [showDemoBanner, setShowDemoBanner] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { lang, setLang, t } = useLang();
-
-  useEffect(() => {
-    if (!user) setLocation('/login');
-  }, [user, setLocation]);
 
   if (!user) return null;
 

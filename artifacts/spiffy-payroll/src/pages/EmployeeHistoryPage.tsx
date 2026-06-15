@@ -17,7 +17,7 @@ export default function EmployeeHistoryPage() {
       const all = getWeekSummaries();
       setSummaries(all.filter(s => s.employeeId === user.id).sort((a, b) => b.weekStart.localeCompare(a.weekStart)));
     }
-  }, [user]);
+  }, [user?.id]);
 
   if (!user) return null;
 

@@ -58,11 +58,11 @@ export default function EmployeeWeekPage() {
       setJobs(getJobsForEmployee(user.id, DEMO_WEEK));
       setTeamLeader(user.id);
     }
-  }, [user]);
+  }, [user?.id]);
 
   const refreshJobs = useCallback(() => {
     if (user) setJobs(getJobsForEmployee(user.id, DEMO_WEEK));
-  }, [user]);
+  }, [user?.id]);
 
   const handleAddJob = (dayOfWeek: number) => {
     if (!user) return;

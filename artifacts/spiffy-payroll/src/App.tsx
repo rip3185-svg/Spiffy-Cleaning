@@ -23,19 +23,30 @@ import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
 
-// Auth Guard component
-const ProtectedRoute = ({ component: Component, allowedRoles }: { component: React.ComponentType<any>, allowedRoles?: string[] }) => {
-  const [location, setLocation] = useLocation();
+// Auth Guard — stable deps so no infinite-loop risk
+const ProtectedRoute = ({
+  component: Component,
+  allowedRoles,
+}: {
+  component: React.ComponentType<any>;
+  allowedRoles?: string[];
+}) => {
+  const [, setLocation] = useLocation();
   const user = getSession();
+  const isLoggedIn = !!user;
+  const role = user?.role ?? null;
 
   useEffect(() => {
-    if (!user) {
+    if (!isLoggedIn) {
       setLocation("/login");
-    } else if (allowedRoles && !allowedRoles.includes(user.role)) {
-      // Basic redirect if not authorized for this view
-      setLocation(user.role === 'employee' ? "/employee/week" : "/manager/overview");
+    } else if (allowedRoles && role && !allowedRoles.includes(role)) {
+      setLocation(role === "employee" ? "/employee/week" : "/manager/overview");
     }
-  }, [user, location, setLocation, allowedRoles]);
+    // allowedRoles is intentionally omitted — it's a static inline array that
+    // never changes at runtime, so including it would re-fire the effect on
+    // every Router re-render and cause an update loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn, role, setLocation]);
 
   if (!user) return null;
   if (allowedRoles && !allowedRoles.includes(user.role)) return null;
@@ -55,18 +66,22 @@ const ProtectedRoute = ({ component: Component, allowedRoles }: { component: Rea
 };
 
 function Router() {
-  const user = getSession();
   const [location, setLocation] = useLocation();
+  // Use stable primitive (id string) instead of the full parsed object so the
+  // effect doesn't re-fire on every render due to JSON.parse returning a new
+  // object reference each time.
+  const userId = getSession()?.id ?? null;
+  const userRole = getSession()?.role ?? null;
 
   useEffect(() => {
     if (location === "/" || location === "") {
-      if (user) {
-        setLocation(user.role === 'employee' ? "/employee/week" : "/manager/overview");
+      if (userId) {
+        setLocation(userRole === "employee" ? "/employee/week" : "/manager/overview");
       } else {
         setLocation("/login");
       }
     }
-  }, [location, user, setLocation]);
+  }, [location, userId, userRole, setLocation]);
 
   return (
     <AnimatePresence mode="wait">
@@ -82,32 +97,32 @@ function Router() {
             </motion.div>
           )}
         </Route>
-        
+
         {/* Employee Routes */}
         <Route path="/employee/week">
-          {() => <ProtectedRoute component={EmployeeWeekPage} allowedRoles={['employee', 'manager', 'admin']} />}
+          {() => <ProtectedRoute component={EmployeeWeekPage} allowedRoles={["employee", "manager", "admin"]} />}
         </Route>
         <Route path="/employee/history">
-          {() => <ProtectedRoute component={EmployeeHistoryPage} allowedRoles={['employee', 'manager', 'admin']} />}
+          {() => <ProtectedRoute component={EmployeeHistoryPage} allowedRoles={["employee", "manager", "admin"]} />}
         </Route>
 
         {/* Manager Routes */}
         <Route path="/manager/overview">
-          {() => <ProtectedRoute component={ManagerOverviewPage} allowedRoles={['manager', 'admin']} />}
+          {() => <ProtectedRoute component={ManagerOverviewPage} allowedRoles={["manager", "admin"]} />}
         </Route>
         <Route path="/manager/franchises">
-          {() => <ProtectedRoute component={FranchiseDashboardPage} allowedRoles={['manager', 'admin']} />}
+          {() => <ProtectedRoute component={FranchiseDashboardPage} allowedRoles={["manager", "admin"]} />}
         </Route>
         <Route path="/manager/employee/:id">
-          {() => <ProtectedRoute component={ManagerEmployeeDetailPage} allowedRoles={['manager', 'admin']} />}
+          {() => <ProtectedRoute component={ManagerEmployeeDetailPage} allowedRoles={["manager", "admin"]} />}
         </Route>
         <Route path="/manager/collections">
-          {() => <ProtectedRoute component={CollectionsPage} allowedRoles={['manager', 'admin']} />}
+          {() => <ProtectedRoute component={CollectionsPage} allowedRoles={["manager", "admin"]} />}
         </Route>
         <Route path="/manager/dashboard">
-          {() => <ProtectedRoute component={ManagerDashboardPage} allowedRoles={['manager', 'admin']} />}
+          {() => <ProtectedRoute component={ManagerDashboardPage} allowedRoles={["manager", "admin"]} />}
         </Route>
-        
+
         {/* Shared/Admin Routes */}
         <Route path="/admin/pay-rates">
           {() => <ProtectedRoute component={PayRatesPage} />}
